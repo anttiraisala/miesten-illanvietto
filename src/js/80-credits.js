@@ -6,6 +6,12 @@ const CREDIT_HEAD = {
   porch: 'LAKE RELATIONS', cook: 'CULINARY ARTS', golden: 'CULINARY ARTS', poker_home: 'GAMBLING (FOR HONOR)', poker_restaurant: 'GAMBLING (FOR HONOR)', poker: 'GAMBLING (FOR HONOR)',
   seagull: 'WILDLIFE', cat: 'WILDLIFE', kebab: 'LOGISTICS', cheers: 'HYDRATION', lamp: 'URBAN PLANNING', ride: 'TRANSPORT',
 };
+const CAPTION = {
+  shop: 'Shopping spree', rc: 'Kevin at full speed', drone_tree: 'Tree 1, Drone 0', drone_land: 'Perfect landing', drone_crash: 'Hard landing',
+  steam: 'Perfect löyly', endurance: 'Last man standing', compliment: 'Manly tears', hug: 'The hug', hug_fail: 'Manly pat',
+  porch: 'Porch beers', cook: 'Dinner is served', golden: 'Golden perfection', poker_home: 'Home poker champion', poker_restaurant: 'Pub poker champion', poker: 'Big pot',
+  seagull: 'The one that got away', cat: 'Cat approved', kebab: 'Kebab break', cheers: 'Cheers!', lamp: 'New friend', ride: 'Ride home',
+};
 const CREDIT_EXTRA = {
   rc: ['Kevin the RC car: as himself'], drone_tree: ['The tree: as itself', 'Drone retrieval: pending'], drone_crash: ['Gravity: as itself'],
   steam: ['Steam consultant: Rauno'], endurance: ['Cooling off: nobody'], cook: ['Kitchen safety officer: none'], golden: ['Sausages: as themselves'],
@@ -58,7 +64,7 @@ function CreditsScene() {
       const text = log ? log.credit : s.caption;
       const lines = wrap(text, 190, 9);
       (CREDIT_EXTRA[id] || []).forEach(x => { lines.push(''); lines.push(x); });
-      slides.push({ head: CREDIT_HEAD[id] || 'HIGHLIGHTS', lines, snap: { canvas: s.canvas, caption: s.caption.length > 34 ? s.caption.slice(0, 32) + '..' : s.caption } });
+      slides.push({ head: CREDIT_HEAD[id] || 'HIGHLIGHTS', lines, snap: { canvas: s.canvas, caption: CAPTION[id] || (s.caption.length > 30 ? s.caption.slice(0, 28) + '..' : s.caption) } });
     });
     const label = G.mood >= 85 ? 'LEGENDARY EVENING' : G.mood >= 65 ? 'GREAT EVENING' : G.mood >= 45 ? 'SOLID EVENING' : 'AWKWARD BUT MEMORABLE EVENING';
     const stat = [label, '', 'Beers'].concat(NAMES.map(c => nm(c) + ': ' + G.beers[c]));

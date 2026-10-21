@@ -8,7 +8,18 @@ The whole game lives in one HTML file ([`index.html`](index.html)), so there is 
 
 **On a phone:** play in **landscape** (hold the phone sideways). The game is designed for touch controls and a landscape screen.
 
-> Status: planning stage. The link above currently shows a placeholder page; the game itself is not implemented yet. See [MILESTONES.md](MILESTONES.md) for the plan.
+> Status: **v1.0, first complete playable version.** See [PROGRESS.md](PROGRESS.md) for the status log and [MILESTONES.md](MILESTONES.md) for the plan.
+
+## Controls
+
+| | Keyboard | Phone (landscape) |
+|---|---|---|
+| Move / menu | Arrow keys or WASD | On-screen D-pad (shown only when needed) |
+| Confirm / advance / action | Space, Enter or Z | **A** button, or tap anywhere on the screen |
+| Switch character | C or Tab | **SWITCH** button |
+| Mute | M | **SOUND** button |
+
+Every episode suggests which of the three guys to play, but you can switch at any time. Poker lets you switch between hands.
 
 ## What the game is about
 
@@ -58,8 +69,8 @@ Outdoors everyone wears their headwear (Rauno's flat cap, Tuomas's hat, Antti's 
 
 ## Technical notes
 
-- Single self-contained `index.html` (HTML5 canvas, plain JavaScript, no build step, no external dependencies).
-- Pixel-art graphics drawn in code.
+- Single self-contained `index.html` (HTML5 canvas, plain JavaScript, no external dependencies). It is generated from `src/` by `python3 tools/build.py`.
+- Pixel-art graphics drawn in code (no image files); 8-bit music and sound effects are synthesized with the Web Audio API (no audio files).
 - Landscape layout, touch controls for phones, keyboard controls for desktop.
 - Hosted with GitHub Pages from the `master` branch.
 
@@ -68,9 +79,14 @@ Outdoors everyone wears their headwear (Rauno's flat cap, Tuomas's hat, Antti's 
 ```
 README.md                    this file
 MILESTONES.md                step-by-step build plan
-index.html                   the game (currently a placeholder)
-assets/characters/           pixel-art character sprites (PNG)
-tools/generate_sprites.py    draws the sprites (python3 tools/generate_sprites.py)
+PROGRESS.md                  live status log
+HANDOFF.md                   complete technical description (for rebuilding or continuing with another AI)
+index.html                   the game (generated single file, do not edit by hand)
+src/                         game source: template.html and js/*.js (concatenated by tools/build.py)
+assets/characters/           reference pixel-art character sheet (PNG)
+tools/build.py               builds index.html from src/
+tools/generate_sprites.py    draws the reference sprites (python3 tools/generate_sprites.py)
+tests/                       Playwright headless tests (unit, bot playthrough, screenshots, mobile)
 ```
 
 ## Privacy

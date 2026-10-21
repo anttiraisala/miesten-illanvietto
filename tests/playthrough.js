@@ -19,7 +19,7 @@ const path = require('path'), fs = require('fs');
     const info = await page.evaluate(() => ({ trace: (window.__trace || []).join(','), music: Scenes.cur && Scenes.cur.music, mood: G.mood }));
     if (info.trace !== lastTrace || n % 4 === 0) { await page.screenshot({ path: `${out}/s${String(n).padStart(3, '0')}.png` }); }
     lastTrace = info.trace; n++;
-    if (info.trace.includes('credits')) { await page.waitForTimeout(8000); await page.screenshot({ path: `${out}/credits.png` }); break; }
+    if (info.trace.includes('credits')) { await page.evaluate(() => { __dbg.dbg.auto = false; __dbg.dbg.speed = 1; }); for (let k = 0; k < 6; k++) { await page.waitForTimeout(3500); await page.screenshot({ path: `${out}/credits${k}.png` }); } break; }
     if (errors.length) break;
   }
   const trace = await page.evaluate(() => (window.__trace || []).join(','));

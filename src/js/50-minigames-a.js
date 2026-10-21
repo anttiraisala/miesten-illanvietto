@@ -126,7 +126,7 @@ function RCScene(o) {
         idx++;
         if (idx >= cps.length) {
           state = 'done'; time += penalty;
-          this.rating = time < 34 ? 'S' : time < 46 ? 'A' : time < 62 ? 'B' : 'C';
+          this.rating = time < 16 ? 'S' : time < 21 ? 'A' : time < 29 ? 'B' : 'C';
           addMood({ S: 8, A: 5, B: 2, C: 0 }[this.rating]);
           Snd.sfx('finish');
           logEvent('rc', nm(G.player) + ' drove the RC course in ' + time.toFixed(1) + ' seconds with ' + hits + ' cone casualt' + (hits === 1 ? 'y' : 'ies') + '.', true);

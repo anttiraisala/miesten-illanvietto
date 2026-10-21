@@ -1149,7 +1149,7 @@ function RCScene(o) {
         idx++;
         if (idx >= cps.length) {
           state = 'done'; time += penalty;
-          this.rating = time < 34 ? 'S' : time < 46 ? 'A' : time < 62 ? 'B' : 'C';
+          this.rating = time < 16 ? 'S' : time < 21 ? 'A' : time < 29 ? 'B' : 'C';
           addMood({ S: 8, A: 5, B: 2, C: 0 }[this.rating]);
           Snd.sfx('finish');
           logEvent('rc', nm(G.player) + ' drove the RC course in ' + time.toFixed(1) + ' seconds with ' + hits + ' cone casualt' + (hits === 1 ? 'y' : 'ies') + '.', true);
@@ -1545,7 +1545,7 @@ function CookScene(o) {
             it.state = 'out';
             it.q = it.c >= this.lo && it.c <= this.hi ? 2 : (it.c > 0.45 ? 1 : 0);
             Snd.sfx(it.q === 2 ? 'coin' : it.q === 1 ? 'select' : 'bad');
-            if (it.q === 2 && !G.flags.goldenSnap) { G.flags.goldenSnap = true; Snap.take('golden', 'golden'); }
+            if (it.q === 2 && !G.flags.goldenSnap) { G.flags.goldenSnap = true; logEvent('golden', 'One sausage reached golden perfection. A single tear was shed in the kitchen.', true); }
           }
         }
         if (items.every(it => it.state !== 'pan')) {
@@ -2352,6 +2352,12 @@ const CREDIT_HEAD = {
   porch: 'LAKE RELATIONS', cook: 'CULINARY ARTS', golden: 'CULINARY ARTS', poker_home: 'GAMBLING (FOR HONOR)', poker_restaurant: 'GAMBLING (FOR HONOR)', poker: 'GAMBLING (FOR HONOR)',
   seagull: 'WILDLIFE', cat: 'WILDLIFE', kebab: 'LOGISTICS', cheers: 'HYDRATION', lamp: 'URBAN PLANNING', ride: 'TRANSPORT',
 };
+const CAPTION = {
+  shop: 'Shopping spree', rc: 'Kevin at full speed', drone_tree: 'Tree 1, Drone 0', drone_land: 'Perfect landing', drone_crash: 'Hard landing',
+  steam: 'Perfect löyly', endurance: 'Last man standing', compliment: 'Manly tears', hug: 'The hug', hug_fail: 'Manly pat',
+  porch: 'Porch beers', cook: 'Dinner is served', golden: 'Golden perfection', poker_home: 'Home poker champion', poker_restaurant: 'Pub poker champion', poker: 'Big pot',
+  seagull: 'The one that got away', cat: 'Cat approved', kebab: 'Kebab break', cheers: 'Cheers!', lamp: 'New friend', ride: 'Ride home',
+};
 const CREDIT_EXTRA = {
   rc: ['Kevin the RC car: as himself'], drone_tree: ['The tree: as itself', 'Drone retrieval: pending'], drone_crash: ['Gravity: as itself'],
   steam: ['Steam consultant: Rauno'], endurance: ['Cooling off: nobody'], cook: ['Kitchen safety officer: none'], golden: ['Sausages: as themselves'],
@@ -2404,7 +2410,7 @@ function CreditsScene() {
       const text = log ? log.credit : s.caption;
       const lines = wrap(text, 190, 9);
       (CREDIT_EXTRA[id] || []).forEach(x => { lines.push(''); lines.push(x); });
-      slides.push({ head: CREDIT_HEAD[id] || 'HIGHLIGHTS', lines, snap: { canvas: s.canvas, caption: s.caption.length > 34 ? s.caption.slice(0, 32) + '..' : s.caption } });
+      slides.push({ head: CREDIT_HEAD[id] || 'HIGHLIGHTS', lines, snap: { canvas: s.canvas, caption: CAPTION[id] || (s.caption.length > 30 ? s.caption.slice(0, 28) + '..' : s.caption) } });
     });
     const label = G.mood >= 85 ? 'LEGENDARY EVENING' : G.mood >= 65 ? 'GREAT EVENING' : G.mood >= 45 ? 'SOLID EVENING' : 'AWKWARD BUT MEMORABLE EVENING';
     const stat = [label, '', 'Beers'].concat(NAMES.map(c => nm(c) + ': ' + G.beers[c]));

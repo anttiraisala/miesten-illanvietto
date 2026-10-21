@@ -220,7 +220,7 @@ function CookScene(o) {
             it.state = 'out';
             it.q = it.c >= this.lo && it.c <= this.hi ? 2 : (it.c > 0.45 ? 1 : 0);
             Snd.sfx(it.q === 2 ? 'coin' : it.q === 1 ? 'select' : 'bad');
-            if (it.q === 2 && !G.flags.goldenSnap) { G.flags.goldenSnap = true; Snap.take('golden', 'golden'); }
+            if (it.q === 2 && !G.flags.goldenSnap) { G.flags.goldenSnap = true; logEvent('golden', 'One sausage reached golden perfection. A single tear was shed in the kitchen.', true); }
           }
         }
         if (items.every(it => it.state !== 'pan')) {

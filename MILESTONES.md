@@ -25,6 +25,8 @@ A step-by-step plan for building **Miesten illanvietto**. Each milestone ends wi
 
 ## M0: Foundation (done)
 
+> Status of the whole plan: see PROGRESS.md. M1-M9 are implemented in v1.0; M10 needs real-phone testing.
+
 - [x] Repo with `master` branch, README, placeholder `index.html`
 - [x] First pixel-art character sketches (Rauno indoors/outdoors, Tuomas, Antti indoors/outdoors)
 - [x] This milestone guide
@@ -33,11 +35,11 @@ A step-by-step plan for building **Miesten illanvietto**. Each milestone ends wi
 
 Goal: a landscape canvas that scales to any screen and runs a scene loop.
 
-- [ ] Canvas with fixed internal resolution (e.g. 320x180), integer-scaled with crisp pixels
-- [ ] Scene manager (title, episode card, minigame, credits)
-- [ ] Input layer: keyboard, touch buttons (D-pad plus A/B), tap-to-advance
-- [ ] "Rotate your phone" overlay in portrait
-- [ ] Pause / mute button
+- [x] Canvas with fixed internal resolution (e.g. 320x180), integer-scaled with crisp pixels
+- [x] Scene manager (title, episode card, minigame, credits)
+- [x] Input layer: keyboard, touch buttons (D-pad plus A/B), tap-to-advance
+- [x] "Rotate your phone" overlay in portrait
+- [x] Pause / mute button
 
 Done when: a blank scene switches to another scene with a button press on both desktop and phone.
 
@@ -45,10 +47,10 @@ Done when: a blank scene switches to another scene with a button press on both d
 
 Goal: the three guys appear in the game and the title screen looks like the game.
 
-- [ ] Embed sprites in `index.html` (or draw from code); idle, walk (4 frames) and a few expressions per character
-- [ ] Hat variants: outdoor, indoor, sauna (bare head)
-- [ ] Character picker with the three guys
-- [ ] Title screen with chiptune jingle
+- [x] Embed sprites in `index.html` (or draw from code); idle, walk (4 frames) and a few expressions per character
+- [x] Hat variants: outdoor, indoor, sauna (bare head)
+- [x] Character picker with the three guys
+- [x] Title screen with chiptune jingle
 
 Done when: you can pick a character and see them walk around on a test screen.
 
@@ -56,74 +58,74 @@ Done when: you can pick a character and see them walk around on a test screen.
 
 Goal: the story spine that all episodes hang on.
 
-- [ ] Episode title card ("Episode 3: Löyly") with dramatic 1-2 sentence text
-- [ ] Meters: mood, blood alcohol, hunger (hidden or shown in a small HUD)
-- [ ] Event log: the game silently records what happens (for the credits)
-- [ ] Character switch menu available in every episode
+- [x] Episode title card ("Episode 3: Löyly") with dramatic 1-2 sentence text
+- [x] Meters: mood, blood alcohol, hunger (hidden or shown in a small HUD)
+- [x] Event log: the game silently records what happens (for the credits)
+- [x] Character switch menu available in every episode
 
 Done when: a stub flow of all 7 episode cards plays in order and the log collects entries.
 
 ## M4: Episode 1 and 2: Meeting up, RC car and drone
 
-- [ ] Parking lot meeting dialogue with choices
-- [ ] Shop scene: pick the shopping list (beer, sausages, onions, snacks); saved to game state
-- [ ] RC car obstacle course (timed, cones and boxes)
-- [ ] Drone flight (fly through rings, tree crash event)
-- [ ] Rauno's technical commentary lines
-- [ ] Sound effects: motor whine, crash, pickup
+- [x] Parking lot meeting dialogue with choices
+- [x] Shop scene: pick the shopping list (beer, sausages, onions, snacks); saved to game state
+- [x] RC car obstacle course (timed, cones and boxes)
+- [x] Drone flight (fly through rings, tree crash event)
+- [x] Rauno's technical commentary lines
+- [x] Sound effects: motor whine, crash, pickup
 
 Done when: you can play from the title screen to the end of the drone flight and the crash is logged.
 
 ## M5: Episode 3 and 4: Sauna and cooking
 
-- [ ] Sauna steam-throwing minigame (timing bar)
-- [ ] Löyly endurance contest
-- [ ] Compliment minigame (the "brotherly love" scene) and the awkward hug
-- [ ] Cooking minigame (fry, chop, don't burn), depends on shopping list
-- [ ] Mood and hunger effects
+- [x] Sauna steam-throwing minigame (timing bar)
+- [x] Löyly endurance contest
+- [x] Compliment minigame (the "brotherly love" scene) and the awkward hug
+- [x] Cooking minigame (fry, chop, don't burn), depends on shopping list
+- [x] Mood and hunger effects
 
 Done when: the first five episodes can be played in a row and the meters change visibly.
 
 ## M6: Episode 5: Poker at home
 
-- [ ] Simplified poker: deal, a few betting choices (fold / call / raise), showdown
-- [ ] AI personalities: Tuomas loose-aggressive, Antti tight-aggressive, Rauno loose-passive
-- [ ] Winner and best hand logged for the credits
-- [ ] Card and chip sound effects
+- [x] Simplified poker: deal, a few betting choices (fold / call / raise), showdown
+- [x] AI personalities: Tuomas loose-aggressive, Antti tight-aggressive, Rauno loose-passive
+- [x] Winner and best hand logged for the credits
+- [x] Card and chip sound effects
 
 Done when: three AI personalities can be recognized by playing against them for a few hands.
 
 ## M7: Episode 6 and 7: Restaurant and the way home
 
-- [ ] Walk or taxi intro with a random event
-- [ ] Restaurant scene with beer ordering and a second poker round
-- [ ] Blood alcohol effects: wobbly controls, blurred text, worse decisions
-- [ ] Callbacks to earlier events ("remember the tree?")
-- [ ] Night ride home and the "next morning" epilogue
+- [x] Walk or taxi intro with a random event
+- [x] Restaurant scene with beer ordering and a second poker round
+- [x] Blood alcohol effects: wobbly controls, blurred text, worse decisions
+- [x] Callbacks to earlier events ("remember the tree?")
+- [x] Night ride home and the "next morning" epilogue
 
 Done when: the whole evening can be played from start to finish.
 
 ## M8: Credits
 
-- [ ] Photo-style snapshots of key moments (polaroid frame around a canvas screenshot)
-- [ ] Alternating layout: photo left / text right, then swapped
-- [ ] Credits text generated from the event log, plus fixed absurd lines per character
-- [ ] Final screen with the car selfie style image and a "play again" button
+- [x] Photo-style snapshots of key moments (polaroid frame around a canvas screenshot)
+- [x] Alternating layout: photo left / text right, then swapped
+- [x] Credits text generated from the event log, plus fixed absurd lines per character
+- [x] Final screen with the car selfie style image and a "play again" button
 
 Done when: two different playthroughs produce visibly different credits.
 
 ## M9: Audio pass
 
-- [ ] Procedural 8-bit music: title theme, daytime, sauna, kitchen, poker, restaurant, night
-- [ ] Complete sound effect set (UI, car, drone, löyly, sizzle, cards, chips, beer)
-- [ ] Volume and mute settings remembered (wrapped in try/catch storage use)
+- [x] Procedural 8-bit music: title theme, daytime, sauna, kitchen, poker, restaurant, night
+- [x] Complete sound effect set (UI, car, drone, löyly, sizzle, cards, chips, beer)
+- [x] Volume and mute settings remembered (wrapped in try/catch storage use)
 
 ## M10: Polish and phone testing
 
-- [ ] Test on at least two phones (Android and iPhone) in landscape
-- [ ] Fix touch targets, safe areas, performance and audio unlock on first tap
-- [ ] Balance minigame difficulty (three friends playing, not a pro audience)
-- [ ] Final README update with screenshots
+- [ ] Test on at least two real phones (Android and iPhone) in landscape (emulated landscape/portrait checked)
+- [x] Touch controls hide when unneeded; safe-area insets in CSS; audio unlocks on first tap
+- [ ] Balance minigame difficulty after real playtests
+- [x] README updated (screenshots still to add)
 
 ## Backlog / ideas
 
