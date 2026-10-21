@@ -13,19 +13,21 @@
   canvas{image-rendering:pixelated;image-rendering:crisp-edges;background:#000;display:block}
   #touch{display:none}
   body.touch #touch{display:block}
-  .btn{position:fixed;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.16);
-    border:2px solid rgba(255,255,255,.4);color:#fff;font:bold 16px "Courier New",monospace;
+  .btn{position:fixed;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);
+    border:2px solid rgba(255,255,255,.32);color:#fff;font:bold 16px "Courier New",monospace;
     display:flex;align-items:center;justify-content:center;touch-action:none;z-index:5}
   .btn.on{background:rgba(255,255,255,.42)}
   .small{width:auto;height:34px;border-radius:10px;padding:0 10px;font-size:12px}
-  #up{left:calc(66px + env(safe-area-inset-left));bottom:76px}
-  #down{left:calc(66px + env(safe-area-inset-left));bottom:12px}
-  #left{left:calc(10px + env(safe-area-inset-left));bottom:44px}
-  #right{left:calc(122px + env(safe-area-inset-left));bottom:44px}
+  #up{left:calc(58px + env(safe-area-inset-left));bottom:66px}
+  #down{left:calc(58px + env(safe-area-inset-left));bottom:6px}
+  #left{left:calc(6px + env(safe-area-inset-left));bottom:36px}
+  #right{left:calc(110px + env(safe-area-inset-left));bottom:36px}
   #a{right:calc(16px + env(safe-area-inset-right));bottom:50px;width:62px;height:62px}
   #b{right:calc(88px + env(safe-area-inset-right));bottom:16px}
-  #sw{top:8px;right:calc(8px + env(safe-area-inset-right))}
-  #mute{top:8px;right:calc(92px + env(safe-area-inset-right))}
+  #sw{top:44px;right:calc(8px + env(safe-area-inset-right))}
+  #mute{top:84px;right:calc(8px + env(safe-area-inset-right))}
+  #b{display:none}
+  body.nodpad #up,body.nodpad #down,body.nodpad #left,body.nodpad #right{display:none}
   #rot{display:none;position:fixed;inset:0;background:#14101a;color:#f2e6c9;z-index:20;
     font:bold 20px "Courier New",monospace;align-items:center;justify-content:center;text-align:center;padding:24px}
   @media (orientation:portrait){ body.touch #rot{display:flex} }

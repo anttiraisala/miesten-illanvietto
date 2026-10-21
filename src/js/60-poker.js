@@ -128,8 +128,8 @@ function PokerScene(o) {
 
   function layoutSeats() {
     const oth = others(me);
-    seatPos[oth[0]] = { x: 70, y: 18, side: 'L' };
-    seatPos[oth[1]] = { x: 356, y: 18, side: 'R' };
+    seatPos[oth[0]] = { x: 10, y: 14, side: 'L' };
+    seatPos[oth[1]] = { x: 346, y: 14, side: 'R' };
     seatPos[me] = { x: 20, y: 120, side: 'M' };
   }
   function activeList() { return NAMES.filter(c => !hand.folded[c]); }
@@ -312,7 +312,7 @@ function PokerScene(o) {
       if (!folded && hand.board.length >= 3) { const v = bestOf(hand.hole[me].concat(hand.board)); T(HAND_NAMES[v[0]], 240, 178, { size: 8, align: 'center', c: '#cdd8ff' }); }
     }
     applyWobble(G.bac[me] * 0.8, t);
-    drawHUD();
+    T('BEER', 418, 202, { size: 8 }); bar(446, 203, 22, 5, G.bac[me], '#f2a02e');
     // bottom panel
     panel(8, 196, W - 16, 68, '#10162e');
     T(msg, 18, 202, { size: 10, c: '#f2e6c9' });

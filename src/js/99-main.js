@@ -26,6 +26,7 @@
     }
     const steps = dbg.speed > 1 ? Math.ceil(dbg.speed) : 1;
     for (let i = 0; i < steps; i++) Scenes.update(dt / steps);
+    if (Scenes.cur && IS_TOUCH) { const need = Scenes.cur.dpad ? !!Scenes.cur.dpad() : true; document.body.classList.toggle('nodpad', !need); }
     Scenes.draw();
     if (Scenes.cur && Scenes.fade > 0) { ctx.fillStyle = 'rgba(0,0,0,' + Scenes.fade + ')'; ctx.fillRect(0, 0, W, H); }
     Input.pressed = {};

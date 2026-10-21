@@ -34,9 +34,9 @@ function TitleScene() {
       order.forEach((c, i) => {
         const sel = c === G.player;
         const bob = sel ? Math.round(Math.sin(t * 8)) * 2 : 0;
-        Sprites.draw(ctx, c, 'out', xs[i], BG.FLOOR.lot - 6 - (sel ? 4 : 0) + bob, { pose: Math.floor(t * 4) % 2 && sel ? 'walk0' : 'idle', scale: 1 });
-        if (sel) { T('▼', xs[i], BG.FLOOR.lot - 90, { align: 'center', c: CH[c].color, size: 12 }); }
-        T(CH[c].name, xs[i], BG.FLOOR.lot + 4, { align: 'center', c: sel ? CH[c].color : '#b8b0a0', size: 10 });
+        Sprites.draw(ctx, c, 'out', xs[i], 232 - (sel ? 4 : 0) + bob, { pose: Math.floor(t * 4) % 2 && sel ? 'walk0' : 'idle', scale: 1 });
+        if (sel) { T('▼', xs[i], 232 - 90, { align: 'center', c: CH[c].color, size: 12 }); }
+        T(CH[c].name, xs[i], 238, { align: 'center', c: sel ? CH[c].color : '#b8b0a0', size: 10 });
       });
       const wob = Math.sin(t * 3) * 3;
       T('MIESTEN', W / 2, 24 + wob, { align: 'center', size: 30, c: '#ffd166' });
@@ -58,6 +58,7 @@ function Card(o) {
   const body = o.text || '';
   return {
     music: o.music, hud: false,
+    dpad() { return !!(o.suggest && G.player !== o.suggest); },
     enter() { t = 0; typed = 0; choice = 0; done = false; (window.__trace = window.__trace || []).push('card:' + o.ep); },
     update(dt) {
       t += dt; typed += dt * 38;
@@ -108,6 +109,7 @@ function Cutscene(o) {
     steps: o.steps.slice(), i: -1, cur: null, typed: 0, sel: 0, waitT: 0, lastBlip: 0, finished: false,
   };
   S.enter = function () { this.advance(); };
+  S.dpad = function () { return !!(this.cur && this.cur.choice); };
   S.char = function (c) { return this.cast.find(x => x.c === c); };
   S.advance = function () {
     this.i++;
@@ -169,11 +171,11 @@ function Cutscene(o) {
     // dialog box
     if (st.end || st.wait !== undefined) { drawToast(); return; }
     const choice = !!st.choice;
-    const by = choice ? 140 : 188, bh = choice ? 122 : 74;
+    const by = choice ? 130 : 196, bh = choice ? 132 : 66;
     panel(8, by, W - 16, bh, '#10162e');
     let tx = 18;
     if (st.who) {
-      Sprites.head(ctx, st.who, 'in', 16, by + 8, 2);
+      Sprites.head(ctx, st.who, 'in', 16, by + 6, 2);
       tx = 78;
       const label = nm(st.who).toUpperCase();
       rect(14, by - 12, tw(label, 10) + 14, 12, CH[st.who].color);
@@ -181,7 +183,7 @@ function Cutscene(o) {
     }
     const shown = this.text.slice(0, Math.floor(this.typed));
     const lines = wrap(shown, W - 16 - tx - 12, 10);
-    lines.forEach((l, i) => T(l, tx, by + 10 + i * 13, { size: 10, c: st.who ? '#f2e6c9' : '#cdd8ff' }));
+    lines.forEach((l, i) => T(l, tx, by + 8 + i * 13, { size: 10, c: st.who ? '#f2e6c9' : '#cdd8ff' }));
     if (choice) {
       const oy = by + 10 + Math.max(1, wrap(this.text, W - 40, 10).length) * 13 + 6;
       this.opts.forEach((opt, i) => {

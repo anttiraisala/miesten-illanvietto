@@ -75,7 +75,7 @@ function CreditsScene() {
     slides.forEach(s => { s.dur = s.last ? 9999 : Math.max(7, (H + s.lines.length * 13) / 34); });
   }
   return {
-    music: 'credits', hud: false, noSwitch: true,
+    music: 'credits', hud: false, noSwitch: true, dpad: () => false,
     enter() { build(); i = 0; t = 0; prev = null; ended = false; (window.__trace = window.__trace || []).push('credits'); },
     update(dt) {
       t += dt; prevT += dt;

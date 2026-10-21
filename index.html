@@ -13,19 +13,21 @@
   canvas{image-rendering:pixelated;image-rendering:crisp-edges;background:#000;display:block}
   #touch{display:none}
   body.touch #touch{display:block}
-  .btn{position:fixed;width:54px;height:54px;border-radius:50%;background:rgba(255,255,255,.16);
-    border:2px solid rgba(255,255,255,.4);color:#fff;font:bold 16px "Courier New",monospace;
+  .btn{position:fixed;width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.12);
+    border:2px solid rgba(255,255,255,.32);color:#fff;font:bold 16px "Courier New",monospace;
     display:flex;align-items:center;justify-content:center;touch-action:none;z-index:5}
   .btn.on{background:rgba(255,255,255,.42)}
   .small{width:auto;height:34px;border-radius:10px;padding:0 10px;font-size:12px}
-  #up{left:calc(66px + env(safe-area-inset-left));bottom:76px}
-  #down{left:calc(66px + env(safe-area-inset-left));bottom:12px}
-  #left{left:calc(10px + env(safe-area-inset-left));bottom:44px}
-  #right{left:calc(122px + env(safe-area-inset-left));bottom:44px}
+  #up{left:calc(58px + env(safe-area-inset-left));bottom:66px}
+  #down{left:calc(58px + env(safe-area-inset-left));bottom:6px}
+  #left{left:calc(6px + env(safe-area-inset-left));bottom:36px}
+  #right{left:calc(110px + env(safe-area-inset-left));bottom:36px}
   #a{right:calc(16px + env(safe-area-inset-right));bottom:50px;width:62px;height:62px}
   #b{right:calc(88px + env(safe-area-inset-right));bottom:16px}
-  #sw{top:8px;right:calc(8px + env(safe-area-inset-right))}
-  #mute{top:8px;right:calc(92px + env(safe-area-inset-right))}
+  #sw{top:44px;right:calc(8px + env(safe-area-inset-right))}
+  #mute{top:84px;right:calc(8px + env(safe-area-inset-right))}
+  #b{display:none}
+  body.nodpad #up,body.nodpad #down,body.nodpad #left,body.nodpad #right{display:none}
   #rot{display:none;position:fixed;inset:0;background:#14101a;color:#f2e6c9;z-index:20;
     font:bold 20px "Courier New",monospace;align-items:center;justify-content:center;text-align:center;padding:24px}
   @media (orientation:portrait){ body.touch #rot{display:flex} }
@@ -713,7 +715,7 @@ function lamp(x, y, on) {
 }
 
 const BG = {
-  FLOOR: { lot: 238, shop: 240, yard: 240, sauna: 252, porch: 244, kitchen: 242, living: 244, street: 242, restaurant: 244, car: 262 },
+  FLOOR: { lot: 194, shop: 194, yard: 194, sauna: 190, porch: 196, kitchen: 196, living: 196, street: 196, restaurant: 196, car: 196 },
 
   lot(t, tod) {
     skyTOD(tod || 'day', 150, t);
@@ -854,9 +856,9 @@ function TitleScene() {
       order.forEach((c, i) => {
         const sel = c === G.player;
         const bob = sel ? Math.round(Math.sin(t * 8)) * 2 : 0;
-        Sprites.draw(ctx, c, 'out', xs[i], BG.FLOOR.lot - 6 - (sel ? 4 : 0) + bob, { pose: Math.floor(t * 4) % 2 && sel ? 'walk0' : 'idle', scale: 1 });
-        if (sel) { T('▼', xs[i], BG.FLOOR.lot - 90, { align: 'center', c: CH[c].color, size: 12 }); }
-        T(CH[c].name, xs[i], BG.FLOOR.lot + 4, { align: 'center', c: sel ? CH[c].color : '#b8b0a0', size: 10 });
+        Sprites.draw(ctx, c, 'out', xs[i], 232 - (sel ? 4 : 0) + bob, { pose: Math.floor(t * 4) % 2 && sel ? 'walk0' : 'idle', scale: 1 });
+        if (sel) { T('▼', xs[i], 232 - 90, { align: 'center', c: CH[c].color, size: 12 }); }
+        T(CH[c].name, xs[i], 238, { align: 'center', c: sel ? CH[c].color : '#b8b0a0', size: 10 });
       });
       const wob = Math.sin(t * 3) * 3;
       T('MIESTEN', W / 2, 24 + wob, { align: 'center', size: 30, c: '#ffd166' });
@@ -878,6 +880,7 @@ function Card(o) {
   const body = o.text || '';
   return {
     music: o.music, hud: false,
+    dpad() { return !!(o.suggest && G.player !== o.suggest); },
     enter() { t = 0; typed = 0; choice = 0; done = false; (window.__trace = window.__trace || []).push('card:' + o.ep); },
     update(dt) {
       t += dt; typed += dt * 38;
@@ -928,6 +931,7 @@ function Cutscene(o) {
     steps: o.steps.slice(), i: -1, cur: null, typed: 0, sel: 0, waitT: 0, lastBlip: 0, finished: false,
   };
   S.enter = function () { this.advance(); };
+  S.dpad = function () { return !!(this.cur && this.cur.choice); };
   S.char = function (c) { return this.cast.find(x => x.c === c); };
   S.advance = function () {
     this.i++;
@@ -989,11 +993,11 @@ function Cutscene(o) {
     // dialog box
     if (st.end || st.wait !== undefined) { drawToast(); return; }
     const choice = !!st.choice;
-    const by = choice ? 140 : 188, bh = choice ? 122 : 74;
+    const by = choice ? 130 : 196, bh = choice ? 132 : 66;
     panel(8, by, W - 16, bh, '#10162e');
     let tx = 18;
     if (st.who) {
-      Sprites.head(ctx, st.who, 'in', 16, by + 8, 2);
+      Sprites.head(ctx, st.who, 'in', 16, by + 6, 2);
       tx = 78;
       const label = nm(st.who).toUpperCase();
       rect(14, by - 12, tw(label, 10) + 14, 12, CH[st.who].color);
@@ -1001,7 +1005,7 @@ function Cutscene(o) {
     }
     const shown = this.text.slice(0, Math.floor(this.typed));
     const lines = wrap(shown, W - 16 - tx - 12, 10);
-    lines.forEach((l, i) => T(l, tx, by + 10 + i * 13, { size: 10, c: st.who ? '#f2e6c9' : '#cdd8ff' }));
+    lines.forEach((l, i) => T(l, tx, by + 8 + i * 13, { size: 10, c: st.who ? '#f2e6c9' : '#cdd8ff' }));
     if (choice) {
       const oy = by + 10 + Math.max(1, wrap(this.text, W - 40, 10).length) * 13 + 6;
       this.opts.forEach((opt, i) => {
@@ -1086,7 +1090,7 @@ function ShopScene(o) {
       T('Left:  ' + (BUDGET - total()) + ' EUR', 340, 64, { size: 10, c: BUDGET - total() < 4 ? '#ff7a7a' : '#8fe36a' });
       wrap(msg, 120, 8).forEach((l, i) => T(l, 340, 86 + i * 10, { size: 8, c: '#cdd8ff' }));
       Sprites.draw(ctx, G.player, 'out', 395, 250, { flip: true });
-      T('Up/Down, A = pick', 400, 140, { size: 8, align: 'center', c: '#8c88a0' });
+      T('Up/Down, A = pick', 400, 148, { size: 8, align: 'center', c: '#8c88a0' });
       drawHUD(); drawToast();
     },
   };
@@ -1741,8 +1745,8 @@ function PokerScene(o) {
 
   function layoutSeats() {
     const oth = others(me);
-    seatPos[oth[0]] = { x: 70, y: 18, side: 'L' };
-    seatPos[oth[1]] = { x: 356, y: 18, side: 'R' };
+    seatPos[oth[0]] = { x: 10, y: 14, side: 'L' };
+    seatPos[oth[1]] = { x: 346, y: 14, side: 'R' };
     seatPos[me] = { x: 20, y: 120, side: 'M' };
   }
   function activeList() { return NAMES.filter(c => !hand.folded[c]); }
@@ -1925,7 +1929,7 @@ function PokerScene(o) {
       if (!folded && hand.board.length >= 3) { const v = bestOf(hand.hole[me].concat(hand.board)); T(HAND_NAMES[v[0]], 240, 178, { size: 8, align: 'center', c: '#cdd8ff' }); }
     }
     applyWobble(G.bac[me] * 0.8, t);
-    drawHUD();
+    T('BEER', 418, 202, { size: 8 }); bar(446, 203, 22, 5, G.bac[me], '#f2a02e');
     // bottom panel
     panel(8, 196, W - 16, 68, '#10162e');
     T(msg, 18, 202, { size: 10, c: '#f2e6c9' });
@@ -1965,7 +1969,7 @@ const EP = {
     text: 'A parking lot. A sunny Saturday. Three men with a plan: they do not have a plan.' },
   2: { title: 'Toys for Grown-ups', time: '15:30', music: 'day', suggest: 'tuomas',
     text: 'Tuomas unpacks the RC car and the drone. Rauno prepares to explain the physics. Antti prepares to be unimpressed.' },
-  3: { title: 'Loyly', time: '17:30', music: 'sauna', suggest: 'rauno',
+  3: { title: 'Löyly', time: '17:30', music: 'sauna', suggest: 'rauno',
     text: 'The great equalizer. Three men, one stove, and a towel policy of limited ambition.' },
   4: { title: 'The Kitchen', time: '19:30', music: 'kitchen', suggest: 'antti',
     text: 'Antti steps up to the stove. Fire, steel and sausage. Everyone else steps back.' },
@@ -2054,9 +2058,9 @@ EP_START[2] = () => Cutscene({
 });
 
 // ---------- episode 3: sauna ----------
-function saunaCast(v) { return [{ c: 'tuomas', x: 110, v: v || 'sauna', y: 214 }, { c: 'antti', x: 190, v: v || 'sauna', y: 214 }, { c: 'rauno', x: 270, v: v || 'sauna', y: 214 }]; }
+function saunaCast(v) { return [{ c: 'tuomas', x: 110, v: v || 'sauna', y: 190 }, { c: 'antti', x: 190, v: v || 'sauna', y: 190 }, { c: 'rauno', x: 270, v: v || 'sauna', y: 190 }]; }
 function saunaBg(t) { BG.sauna(t); }
-function saunaFg() { rect(40, 214, 280, 10, '#8a5a30'); rect(40, 214, 280, 2, '#a8723d'); rect(40, 224, 280, 24, '#63401f'); }
+function saunaFg() { rect(40, 188, 280, 10, '#8a5a30'); rect(40, 188, 280, 2, '#a8723d'); rect(40, 198, 280, 24, '#63401f'); }
 let compIdx = 0;
 function complimentRound() {
   const traits = { tuomas: 'Your toys make grown men weep with joy.', antti: 'You can make a sausage taste like a love letter.', rauno: 'You speak like a Nobel laureate who also fixes my Wi-Fi.' };
@@ -2080,10 +2084,10 @@ function complimentRound() {
   ];
 }
 EP_START[3] = () => Cutscene({
-  bg: saunaBg, fg: saunaFg, floor: 214, bust: true, music: 'sauna', cast: saunaCast(),
+  bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
   steps: [
     nar('The sauna: 80 degrees. The mood: 100 percent. Towels: present, arguably.'),
-    say('antti', '{P}, you throw the loyly. It is a sacred responsibility.'),
+    say('antti', '{P}, you throw the löyly. It is a sacred responsibility.'),
     say('rauno', 'Physics dictates that water on hot stones becomes steam rapidly. I shall not elaborate. I shall elaborate.'),
     say('tuomas', 'Please do not elaborate.'),
   ],
@@ -2092,9 +2096,9 @@ EP_START[3] = () => Cutscene({
 function steamGame() {
   const puffs = [];
   return TimingScene({
-    title: 'THROW THE LOYLY', hint: 'Press A when the marker is in the green zone', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
-    bg: saunaBg, floor: 214, bust: true, cast: saunaCast(),
-    texts: { hit: 'Perfect loyly! Aaah...', low: 'Weak splash. The stones are unimpressed.', high: 'TOO MUCH! A wall of steam. Everyone wheezes.' },
+    title: 'THROW THE LÖYLY', hint: 'Press A when the marker is in the green zone', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
+    bg: saunaBg, floor: 190, bust: true, cast: saunaCast(),
+    texts: { hit: 'Perfect löyly! Aaah...', low: 'Weak splash. The stones are unimpressed.', high: 'TOO MUCH! A wall of steam. Everyone wheezes.' },
     expr: (c, st) => (st.hits >= 2 ? 'hot' : undefined),
     fg: saunaFg,
     onGrade: (g, i, st) => {
@@ -2108,16 +2112,16 @@ function steamGame() {
     },
     done: (grades) => {
       const hits = grades.filter(g => g === 'hit').length;
-      logEvent('steam', 'The loyly was thrown ' + grades.length + ' times. ' + hits + ' of them were perfect. The rest were interpreted as character.', hits >= 3);
+      logEvent('steam', 'The löyly was thrown ' + grades.length + ' times. ' + hits + ' of them were perfect. The rest were interpreted as character.', hits >= 3);
       go(Cutscene({
-        bg: saunaBg, fg: saunaFg, floor: 214, bust: true, music: 'sauna', cast: saunaCast(),
+        bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
         steps: [
           say('rauno', hits >= 4 ? 'A flawless thermal performance.' : hits >= 2 ? 'Acceptable. The stones have no complaints.' : 'I have seen better steam in a kettle.'),
           nar('Now: the ancient sauna ritual. Who can endure the heat the longest? Mash A to stay on the bench!'),
         ],
         onEnd: () => go(EnduranceScene({
           done: () => go(Cutscene({
-            bg: saunaBg, fg: saunaFg, floor: 214, bust: true, music: 'sauna', cast: saunaCast(),
+            bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
             steps: [
               say(G.flags.saunaWinner || 'antti', 'I won. I will not be humble about it.'),
               nar('In the sauna, honesty comes easy. And so do compliments.'),
@@ -2259,16 +2263,16 @@ function cheersGame() {
   const sparks = [];
   return TimingScene({
     title: 'CHEERS!', hint: 'Press A when the glasses meet in the green zone', rounds: 3, zoneW: 0.22, speed: 1.35, music: 'restaurant',
-    bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant,
+    bg: t => BG.restaurant(t), floor: 196,
     cast: [{ c: 'tuomas', x: 120, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 360, v: 'out' }],
     texts: { hit: 'CLINK! Perfect cheers.', low: 'Too early. Beer on the table.', high: 'Too late. Glass meets elbow.' },
     onGrade: (g) => {
       drinkAll(1);
-      if (g === 'hit') { Snd.sfx('clink'); addMood(3); for (let i = 0; i < 12; i++) sparks.push({ x: 240 + rnd(-10, 10), y: 150, vx: rnd(-60, 60), vy: rnd(-70, -10), life: 0.8 }); }
+      if (g === 'hit') { Snd.sfx('clink'); addMood(3); for (let i = 0; i < 12; i++) sparks.push({ x: 240 + rnd(-10, 10), y: 100, vx: rnd(-60, 60), vy: rnd(-70, -10), life: 0.8 }); }
       else { Snd.sfx('bad'); addMood(-1); }
     },
     extra: (t, st) => {
-      [[170, 160], [240, 150], [310, 160]].forEach((p, i) => {
+      [[170, 110], [240, 100], [310, 110]].forEach((p, i) => {
         rect(p[0] - 9, p[1] - 4 + Math.sin(t * 3 + i) * 2, 18, 24, '#f0b030'); rect(p[0] - 9, p[1] - 8 + Math.sin(t * 3 + i) * 2, 18, 6, '#fff');
       });
       sparks.forEach(s => { s.x += s.vx * 0.016; s.y += s.vy * 0.016; s.vy += 3; s.life -= 0.016; rect(s.x, s.y, 2, 2, '#fff7a8'); });
@@ -2316,8 +2320,8 @@ EP_START[7] = () => Cutscene({
     say('rauno', 'I have ordered a taxi. It will arrive in five minutes, which in Finnish means twenty.'),
   ],
   onEnd: () => go(Cutscene({
-    bg: t => BG.car(t), floor: 262, music: 'night', bust: true, noMarker: true,
-    cast: [{ c: 'rauno', x: 140, v: 'out', y: 262 }, { c: 'tuomas', x: 340, v: 'out', y: 262 }, { c: 'antti', x: 240, v: 'out', y: 190 }],
+    bg: t => BG.car(t), floor: 196, music: 'night', bust: true, noMarker: true,
+    cast: [{ c: 'antti', x: 240, v: 'out', y: 150 }, { c: 'rauno', x: 140, v: 'out', y: 196 }, { c: 'tuomas', x: 340, v: 'out', y: 196 }],
     steps: [
       nar('The taxi arrives. Antti takes the back seat, as nature intended.'),
       say('tuomas', 'That was the best day ever.'),
@@ -2417,7 +2421,7 @@ function CreditsScene() {
     slides.forEach(s => { s.dur = s.last ? 9999 : Math.max(7, (H + s.lines.length * 13) / 34); });
   }
   return {
-    music: 'credits', hud: false, noSwitch: true,
+    music: 'credits', hud: false, noSwitch: true, dpad: () => false,
     enter() { build(); i = 0; t = 0; prev = null; ended = false; (window.__trace = window.__trace || []).push('credits'); },
     update(dt) {
       t += dt; prevT += dt;
@@ -2491,6 +2495,7 @@ function CreditsScene() {
     }
     const steps = dbg.speed > 1 ? Math.ceil(dbg.speed) : 1;
     for (let i = 0; i < steps; i++) Scenes.update(dt / steps);
+    if (Scenes.cur && IS_TOUCH) { const need = Scenes.cur.dpad ? !!Scenes.cur.dpad() : true; document.body.classList.toggle('nodpad', !need); }
     Scenes.draw();
     if (Scenes.cur && Scenes.fade > 0) { ctx.fillStyle = 'rgba(0,0,0,' + Scenes.fade + ')'; ctx.fillRect(0, 0, W, H); }
     Input.pressed = {};

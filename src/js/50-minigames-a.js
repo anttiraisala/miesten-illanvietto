@@ -67,7 +67,7 @@ function ShopScene(o) {
       T('Left:  ' + (BUDGET - total()) + ' EUR', 340, 64, { size: 10, c: BUDGET - total() < 4 ? '#ff7a7a' : '#8fe36a' });
       wrap(msg, 120, 8).forEach((l, i) => T(l, 340, 86 + i * 10, { size: 8, c: '#cdd8ff' }));
       Sprites.draw(ctx, G.player, 'out', 395, 250, { flip: true });
-      T('Up/Down, A = pick', 400, 140, { size: 8, align: 'center', c: '#8c88a0' });
+      T('Up/Down, A = pick', 400, 148, { size: 8, align: 'center', c: '#8c88a0' });
       drawHUD(); drawToast();
     },
   };

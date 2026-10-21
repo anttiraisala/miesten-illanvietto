@@ -48,7 +48,7 @@ function lamp(x, y, on) {
 }
 
 const BG = {
-  FLOOR: { lot: 238, shop: 240, yard: 240, sauna: 252, porch: 244, kitchen: 242, living: 244, street: 242, restaurant: 244, car: 262 },
+  FLOOR: { lot: 194, shop: 194, yard: 194, sauna: 190, porch: 196, kitchen: 196, living: 196, street: 196, restaurant: 196, car: 196 },
 
   lot(t, tod) {
     skyTOD(tod || 'day', 150, t);

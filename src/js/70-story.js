@@ -10,7 +10,7 @@ const EP = {
     text: 'A parking lot. A sunny Saturday. Three men with a plan: they do not have a plan.' },
   2: { title: 'Toys for Grown-ups', time: '15:30', music: 'day', suggest: 'tuomas',
     text: 'Tuomas unpacks the RC car and the drone. Rauno prepares to explain the physics. Antti prepares to be unimpressed.' },
-  3: { title: 'Loyly', time: '17:30', music: 'sauna', suggest: 'rauno',
+  3: { title: 'Löyly', time: '17:30', music: 'sauna', suggest: 'rauno',
     text: 'The great equalizer. Three men, one stove, and a towel policy of limited ambition.' },
   4: { title: 'The Kitchen', time: '19:30', music: 'kitchen', suggest: 'antti',
     text: 'Antti steps up to the stove. Fire, steel and sausage. Everyone else steps back.' },
@@ -99,9 +99,9 @@ EP_START[2] = () => Cutscene({
 });
 
 // ---------- episode 3: sauna ----------
-function saunaCast(v) { return [{ c: 'tuomas', x: 110, v: v || 'sauna', y: 214 }, { c: 'antti', x: 190, v: v || 'sauna', y: 214 }, { c: 'rauno', x: 270, v: v || 'sauna', y: 214 }]; }
+function saunaCast(v) { return [{ c: 'tuomas', x: 110, v: v || 'sauna', y: 190 }, { c: 'antti', x: 190, v: v || 'sauna', y: 190 }, { c: 'rauno', x: 270, v: v || 'sauna', y: 190 }]; }
 function saunaBg(t) { BG.sauna(t); }
-function saunaFg() { rect(40, 214, 280, 10, '#8a5a30'); rect(40, 214, 280, 2, '#a8723d'); rect(40, 224, 280, 24, '#63401f'); }
+function saunaFg() { rect(40, 188, 280, 10, '#8a5a30'); rect(40, 188, 280, 2, '#a8723d'); rect(40, 198, 280, 24, '#63401f'); }
 let compIdx = 0;
 function complimentRound() {
   const traits = { tuomas: 'Your toys make grown men weep with joy.', antti: 'You can make a sausage taste like a love letter.', rauno: 'You speak like a Nobel laureate who also fixes my Wi-Fi.' };
@@ -125,10 +125,10 @@ function complimentRound() {
   ];
 }
 EP_START[3] = () => Cutscene({
-  bg: saunaBg, fg: saunaFg, floor: 214, bust: true, music: 'sauna', cast: saunaCast(),
+  bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
   steps: [
     nar('The sauna: 80 degrees. The mood: 100 percent. Towels: present, arguably.'),
-    say('antti', '{P}, you throw the loyly. It is a sacred responsibility.'),
+    say('antti', '{P}, you throw the löyly. It is a sacred responsibility.'),
     say('rauno', 'Physics dictates that water on hot stones becomes steam rapidly. I shall not elaborate. I shall elaborate.'),
     say('tuomas', 'Please do not elaborate.'),
   ],
@@ -137,9 +137,9 @@ EP_START[3] = () => Cutscene({
 function steamGame() {
   const puffs = [];
   return TimingScene({
-    title: 'THROW THE LOYLY', hint: 'Press A when the marker is in the green zone', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
-    bg: saunaBg, floor: 214, bust: true, cast: saunaCast(),
-    texts: { hit: 'Perfect loyly! Aaah...', low: 'Weak splash. The stones are unimpressed.', high: 'TOO MUCH! A wall of steam. Everyone wheezes.' },
+    title: 'THROW THE LÖYLY', hint: 'Press A when the marker is in the green zone', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
+    bg: saunaBg, floor: 190, bust: true, cast: saunaCast(),
+    texts: { hit: 'Perfect löyly! Aaah...', low: 'Weak splash. The stones are unimpressed.', high: 'TOO MUCH! A wall of steam. Everyone wheezes.' },
     expr: (c, st) => (st.hits >= 2 ? 'hot' : undefined),
     fg: saunaFg,
     onGrade: (g, i, st) => {
@@ -153,16 +153,16 @@ function steamGame() {
     },
     done: (grades) => {
       const hits = grades.filter(g => g === 'hit').length;
-      logEvent('steam', 'The loyly was thrown ' + grades.length + ' times. ' + hits + ' of them were perfect. The rest were interpreted as character.', hits >= 3);
+      logEvent('steam', 'The löyly was thrown ' + grades.length + ' times. ' + hits + ' of them were perfect. The rest were interpreted as character.', hits >= 3);
       go(Cutscene({
-        bg: saunaBg, fg: saunaFg, floor: 214, bust: true, music: 'sauna', cast: saunaCast(),
+        bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
         steps: [
           say('rauno', hits >= 4 ? 'A flawless thermal performance.' : hits >= 2 ? 'Acceptable. The stones have no complaints.' : 'I have seen better steam in a kettle.'),
           nar('Now: the ancient sauna ritual. Who can endure the heat the longest? Mash A to stay on the bench!'),
         ],
         onEnd: () => go(EnduranceScene({
           done: () => go(Cutscene({
-            bg: saunaBg, fg: saunaFg, floor: 214, bust: true, music: 'sauna', cast: saunaCast(),
+            bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
             steps: [
               say(G.flags.saunaWinner || 'antti', 'I won. I will not be humble about it.'),
               nar('In the sauna, honesty comes easy. And so do compliments.'),
@@ -304,16 +304,16 @@ function cheersGame() {
   const sparks = [];
   return TimingScene({
     title: 'CHEERS!', hint: 'Press A when the glasses meet in the green zone', rounds: 3, zoneW: 0.22, speed: 1.35, music: 'restaurant',
-    bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant,
+    bg: t => BG.restaurant(t), floor: 196,
     cast: [{ c: 'tuomas', x: 120, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 360, v: 'out' }],
     texts: { hit: 'CLINK! Perfect cheers.', low: 'Too early. Beer on the table.', high: 'Too late. Glass meets elbow.' },
     onGrade: (g) => {
       drinkAll(1);
-      if (g === 'hit') { Snd.sfx('clink'); addMood(3); for (let i = 0; i < 12; i++) sparks.push({ x: 240 + rnd(-10, 10), y: 150, vx: rnd(-60, 60), vy: rnd(-70, -10), life: 0.8 }); }
+      if (g === 'hit') { Snd.sfx('clink'); addMood(3); for (let i = 0; i < 12; i++) sparks.push({ x: 240 + rnd(-10, 10), y: 100, vx: rnd(-60, 60), vy: rnd(-70, -10), life: 0.8 }); }
       else { Snd.sfx('bad'); addMood(-1); }
     },
     extra: (t, st) => {
-      [[170, 160], [240, 150], [310, 160]].forEach((p, i) => {
+      [[170, 110], [240, 100], [310, 110]].forEach((p, i) => {
         rect(p[0] - 9, p[1] - 4 + Math.sin(t * 3 + i) * 2, 18, 24, '#f0b030'); rect(p[0] - 9, p[1] - 8 + Math.sin(t * 3 + i) * 2, 18, 6, '#fff');
       });
       sparks.forEach(s => { s.x += s.vx * 0.016; s.y += s.vy * 0.016; s.vy += 3; s.life -= 0.016; rect(s.x, s.y, 2, 2, '#fff7a8'); });
@@ -361,8 +361,8 @@ EP_START[7] = () => Cutscene({
     say('rauno', 'I have ordered a taxi. It will arrive in five minutes, which in Finnish means twenty.'),
   ],
   onEnd: () => go(Cutscene({
-    bg: t => BG.car(t), floor: 262, music: 'night', bust: true, noMarker: true,
-    cast: [{ c: 'rauno', x: 140, v: 'out', y: 262 }, { c: 'tuomas', x: 340, v: 'out', y: 262 }, { c: 'antti', x: 240, v: 'out', y: 190 }],
+    bg: t => BG.car(t), floor: 196, music: 'night', bust: true, noMarker: true,
+    cast: [{ c: 'antti', x: 240, v: 'out', y: 150 }, { c: 'rauno', x: 140, v: 'out', y: 196 }, { c: 'tuomas', x: 340, v: 'out', y: 196 }],
     steps: [
       nar('The taxi arrives. Antti takes the back seat, as nature intended.'),
       say('tuomas', 'That was the best day ever.'),
