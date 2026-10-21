@@ -8,7 +8,7 @@ The whole game lives in one HTML file ([`index.html`](index.html)), so there is 
 
 **On a phone:** play in **landscape** (hold the phone sideways). The game is designed for touch controls and a landscape screen.
 
-> Status: planning stage. The link above currently shows a placeholder page; the game itself is not implemented yet.
+> Status: planning stage. The link above currently shows a placeholder page; the game itself is not implemented yet. See [MILESTONES.md](MILESTONES.md) for the plan.
 
 ## What the game is about
 
@@ -50,7 +50,9 @@ Outdoors everyone wears their headwear (Rauno's flat cap, Tuomas's hat, Antti's 
 
 ## Gameplay notes
 
-- Played by the three of us together: the player switches character from episode to episode depending on whose episode it is (Tuomas drives and flies, Antti cooks, and so on).
+- Played by the three of us together: each episode suggests the character whose episode it is (Tuomas drives and flies, Antti cooks, and so on), but the player can switch character at any time.
+- Poker is a lightweight, simplified version, not full Texas hold'em betting rules.
+- Sound effects and 8-bit chiptune music are generated in the browser with the Web Audio API.
 - Inside jokes from earlier episodes come back later in the evening.
 - Choices (shopping list, what you say, who wins at poker) change the ending.
 
@@ -64,10 +66,13 @@ Outdoors everyone wears their headwear (Rauno's flat cap, Tuomas's hat, Antti's 
 ## Repository layout
 
 ```
-README.md    this file
-index.html   the game (currently a placeholder)
+README.md                    this file
+MILESTONES.md                step-by-step build plan
+index.html                   the game (currently a placeholder)
+assets/characters/           pixel-art character sprites (PNG)
+tools/generate_sprites.py    draws the sprites (python3 tools/generate_sprites.py)
 ```
 
 ## Privacy
 
-This is a private-joke game made for three friends. Reference photos of the guys used while designing the pixel-art characters are intentionally **not** stored in this repository.
+This is a private-joke game made for three friends. The pixel-art characters are drawn cartoons. The real reference photos used while designing them are intentionally **not** stored in this repository.
