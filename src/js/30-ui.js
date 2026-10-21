@@ -47,14 +47,14 @@ function circle(x, y, r, c) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, 
 function drawHUD() {
   if (!G) return;
   const x = 6, y = 6;
-  T('MOOD', x, y, { size: 8 }); bar(x + 34, y + 1, 50, 5, G.mood / 100, '#ff7aa8');
-  T('FOOD', x, y + 10, { size: 8 }); bar(x + 34, y + 11, 50, 5, 1 - G.hunger / 100, '#ffd166');
-  T('BEER', x, y + 20, { size: 8 }); bar(x + 34, y + 21, 50, 5, G.bac[G.player], '#f2a02e');
+  T('FIILIS', x, y, { size: 8 }); bar(x + 34, y + 1, 50, 5, G.mood / 100, '#ff7aa8');
+  T('MAHA', x, y + 10, { size: 8 }); bar(x + 34, y + 11, 50, 5, 1 - G.hunger / 100, '#ffd166');
+  T('KALJA', x, y + 20, { size: 8 }); bar(x + 34, y + 21, 50, 5, G.bac[G.player], '#f2a02e');
   const bx = W - 92;
   ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(bx - 2, 4, 90, 30);
   Sprites.head(ctx, G.player, 'in', bx, 6, 1);
   T(nm(G.player).toUpperCase(), bx + 30, 9, { size: 10, c: CH[G.player].color });
-  T('C: switch', bx + 30, 21, { size: 8, c: '#b8b0a0' });
+  T('C: vaihda', bx + 30, 21, { size: 8, c: '#b8b0a0' });
 }
 function drawToast() {
   if (Toast.t <= 0) return;

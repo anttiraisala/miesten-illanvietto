@@ -3,10 +3,8 @@
 function subst(s) {
   if (typeof s === 'function') s = s();
   const o = others();
-  return String(s)
-    .replace(/\{P\}/g, nm(G.player))
-    .replace(/\{O1\}/g, nm(o[0])).replace(/\{O2\}/g, nm(o[1]))
-    .replace(/\{T\}/g, nm(G.flags.target || o[0]));
+  const who = { P: G.player, O1: o[0], O2: o[1], T: G.flags.target || o[0] };
+  return String(s).replace(/\{(P|O1|O2|T)(?::(\w+))?\}/g, (m, k, c) => nf(who[k], c));
 }
 
 // ---------- title ----------
@@ -41,12 +39,12 @@ function TitleScene() {
       const wob = Math.sin(t * 3) * 3;
       T('MIESTEN', W / 2, 24 + wob, { align: 'center', size: 30, c: '#ffd166' });
       T('ILLANVIETTO', W / 2, 58 + wob, { align: 'center', size: 30, c: '#ff7aa8' });
-      T('A Saturday epic in pixels', W / 2, 98, { align: 'center', size: 10, c: '#f2e6c9' });
+      T('Lauantain eepos pikseleinä', W / 2, 98, { align: 'center', size: 10, c: '#f2e6c9' });
       panel(60, 114, 360, 34, 'rgba(10,10,30,0.8)');
-      T('Pick your guy:  ◄ ►   then press A', W / 2, 155, { align: 'center', size: 10 });
-      T('You can switch characters any time (C / SWITCH)', W / 2, 133, { align: 'center', size: 8, c: '#b8b0a0' });
-      if (Math.floor(t * 2) % 2 === 0) T('PRESS A TO START', W / 2, 160, { align: 'center', size: 12, c: '#fff' });
-      T('v1.0  |  8-bit sound on: tap a button', W / 2, 258, { align: 'center', size: 8, c: '#8c88a0' });
+      T('Valitse jätkäsi:  ◄ ►   ja paina A', W / 2, 155, { align: 'center', size: 10 });
+      T('Voit vaihtaa hahmoa milloin vain (C / VAIHDA)', W / 2, 133, { align: 'center', size: 8, c: '#b8b0a0' });
+      if (Math.floor(t * 2) % 2 === 0) T('ALOITA PAINAMALLA A', W / 2, 160, { align: 'center', size: 12, c: '#fff' });
+      T('v1.0  |  8-bittinen ääni alkaa napin painalluksesta', W / 2, 258, { align: 'center', size: 8, c: '#8c88a0' });
       drawToast();
     },
   };
@@ -77,7 +75,7 @@ function Card(o) {
       rect(0, 0, W, H, '#07060d');
       for (let i = 0; i < 70; i++) rect((i * 131 + Math.floor(t * 10) * 17) % W, (i * 71 + Math.floor(t * 10) * 7) % H, 1, 1, 'rgba(255,255,255,0.12)');
       rect(0, 0, W, 26, '#000'); rect(0, H - 26, W, 26, '#000');
-      T('EPISODE ' + o.ep, W / 2, 40, { align: 'center', size: 11, c: '#c9a24a' });
+      T('JAKSO ' + o.ep, W / 2, 40, { align: 'center', size: 11, c: '#c9a24a' });
       rect(W / 2 - 80, 56, 160, 1, '#c9a24a');
       T(o.title.toUpperCase(), W / 2, 66, { align: 'center', size: 26, c: '#f6efd8' });
       rect(W / 2 - 80, 102, 160, 1, '#c9a24a');
@@ -86,13 +84,13 @@ function Card(o) {
       lines.forEach((l, i) => T(l, W / 2, 118 + i * 13, { align: 'center', size: 10, c: '#cfc6b0' }));
       const hasChoice = o.suggest && G.player !== o.suggest;
       if (hasChoice && typed >= body.length) {
-        T('Suggested hero for this episode:', W / 2, 188, { align: 'center', size: 9, c: '#b8b0a0' });
-        const a = (choice === 0 ? '► ' : '  ') + 'Play as ' + nm(o.suggest).toUpperCase();
-        const b = (choice === 1 ? '► ' : '  ') + 'Keep ' + nm(G.player).toUpperCase();
+        T('Jakson ehdotettu sankari:', W / 2, 188, { align: 'center', size: 9, c: '#b8b0a0' });
+        const a = (choice === 0 ? '► ' : '  ') + 'Pelaa: ' + nm(o.suggest).toUpperCase();
+        const b = (choice === 1 ? '► ' : '  ') + 'Jatka: ' + nm(G.player).toUpperCase();
         T(a, W / 2 - 70, 202, { align: 'left', size: 11, c: choice === 0 ? CH[o.suggest].color : '#8c88a0' });
         T(b, W / 2 - 70, 218, { align: 'left', size: 11, c: choice === 1 ? CH[G.player].color : '#8c88a0' });
       } else if (typed >= body.length && Math.floor(t * 2) % 2 === 0) {
-        T('A: continue', W / 2, 210, { align: 'center', size: 10, c: '#f2e6c9' });
+        T('A: jatka', W / 2, 210, { align: 'center', size: 10, c: '#f2e6c9' });
       }
       if (o.note) T(o.note, W / 2, 244, { align: 'center', size: 8, c: '#7a7690' });
       drawToast();

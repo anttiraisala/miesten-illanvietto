@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fi">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
@@ -42,10 +42,10 @@
   <div class="btn" id="right" data-k="right">&#9654;</div>
   <div class="btn" id="a" data-k="a">A</div>
   <div class="btn" id="b" data-k="b">B</div>
-  <div class="btn small" id="sw" data-k="sw">SWITCH</div>
-  <div class="btn small" id="mute" data-k="mute">SOUND</div>
+  <div class="btn small" id="sw" data-k="sw">VAIHDA</div>
+  <div class="btn small" id="mute" data-k="mute">ÄÄNI</div>
 </div>
-<div id="rot">Rotate your phone to landscape<br><br>&#8635;</div>
+<div id="rot">Käännä puhelin vaakasuuntaan<br><br>&#8635;</div>
 <script>
 // ===== 00-core.js =====
 'use strict';
@@ -148,6 +148,13 @@ function drinkBeer(who, n) {
 function drinkAll(n) { NAMES.forEach(c => drinkBeer(c, n)); }
 const others = (me) => NAMES.filter(c => c !== (me || G.player));
 const nm = c => CH[c].name;
+// Finnish inflections of the names (nom, gen, all, par, ine, ela, ill, ade)
+const FI = {
+  rauno:  { nom: 'Rauno', gen: 'Raunon', all: 'Raunolle', par: 'Raunoa', ine: 'Raunossa', ela: 'Raunosta', ill: 'Raunoon', ade: 'Raunolla' },
+  tuomas: { nom: 'Tuomas', gen: 'Tuomaksen', all: 'Tuomakselle', par: 'Tuomasta', ine: 'Tuomaksessa', ela: 'Tuomaksesta', ill: 'Tuomakseen', ade: 'Tuomaksella' },
+  antti:  { nom: 'Antti', gen: 'Antin', all: 'Antille', par: 'Anttia', ine: 'Antissa', ela: 'Antista', ill: 'Anttiin', ade: 'Antilla' },
+};
+const nf = (c, k) => FI[c][k || 'nom'];
 
 // event log: used to build the credits
 function logEvent(id, credit, snap) {
@@ -202,7 +209,7 @@ const Scenes = {
       const i = NAMES.indexOf(G.player);
       G.player = NAMES[(i + 1) % 3];
       Snd.sfx('switch');
-      Toast.show('Now playing: ' + nm(G.player));
+      Toast.show('Pelaajana nyt: ' + nm(G.player));
       if (this.cur.onSwitch) this.cur.onSwitch();
     }
     if (this.state !== 'out' || true) this.cur.update(dt);
@@ -241,7 +248,7 @@ const Snd = (() => {
     muted = !muted;
     try { localStorage.setItem('mi_muted', muted ? '1' : '0'); } catch (e) { /* ignore */ }
     if (master) master.gain.value = muted ? 0 : 0.6;
-    Toast.show(muted ? 'Sound off' : 'Sound on');
+    Toast.show(muted ? 'Ääni pois' : 'Ääni päällä');
   }
   const NOTE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
   function freq(n) {
@@ -633,14 +640,14 @@ function circle(x, y, r, c) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, 
 function drawHUD() {
   if (!G) return;
   const x = 6, y = 6;
-  T('MOOD', x, y, { size: 8 }); bar(x + 34, y + 1, 50, 5, G.mood / 100, '#ff7aa8');
-  T('FOOD', x, y + 10, { size: 8 }); bar(x + 34, y + 11, 50, 5, 1 - G.hunger / 100, '#ffd166');
-  T('BEER', x, y + 20, { size: 8 }); bar(x + 34, y + 21, 50, 5, G.bac[G.player], '#f2a02e');
+  T('FIILIS', x, y, { size: 8 }); bar(x + 34, y + 1, 50, 5, G.mood / 100, '#ff7aa8');
+  T('MAHA', x, y + 10, { size: 8 }); bar(x + 34, y + 11, 50, 5, 1 - G.hunger / 100, '#ffd166');
+  T('KALJA', x, y + 20, { size: 8 }); bar(x + 34, y + 21, 50, 5, G.bac[G.player], '#f2a02e');
   const bx = W - 92;
   ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(bx - 2, 4, 90, 30);
   Sprites.head(ctx, G.player, 'in', bx, 6, 1);
   T(nm(G.player).toUpperCase(), bx + 30, 9, { size: 10, c: CH[G.player].color });
-  T('C: switch', bx + 30, 21, { size: 8, c: '#b8b0a0' });
+  T('C: vaihda', bx + 30, 21, { size: 8, c: '#b8b0a0' });
 }
 function drawToast() {
   if (Toast.t <= 0) return;
@@ -803,7 +810,7 @@ const BG = {
     for (let x = 0; x < W; x += 30) rect(x, 0, 2, 190, '#5c3836');
     rect(0, 120, W, 6, '#7a4a2a');
     const col = Math.sin(t * 3) > 0 ? '#ff4a6b' : '#ff8aa0';
-    rect(190, 24, 100, 34, '#1a0f14'); T('P U B', 240, 32, { size: 16, c: col, align: 'center' });
+    rect(190, 24, 100, 34, '#1a0f14'); T('B A A R I', 240, 32, { size: 16, c: col, align: 'center' });
     for (let i = 0; i < 6; i++) { rect(30 + i * 70, 78, 8, 20, ['#d9a05a', '#7ad0a0', '#e07a7a'][i % 3]); }
     rect(0, 190, W, 80, '#3a2418'); rect(0, 190, W, 3, '#5a3a28');
     for (let x = 0; x < W; x += 48) rect(x, 190, 1, 80, '#2e1c12');
@@ -825,10 +832,8 @@ const BG = {
 function subst(s) {
   if (typeof s === 'function') s = s();
   const o = others();
-  return String(s)
-    .replace(/\{P\}/g, nm(G.player))
-    .replace(/\{O1\}/g, nm(o[0])).replace(/\{O2\}/g, nm(o[1]))
-    .replace(/\{T\}/g, nm(G.flags.target || o[0]));
+  const who = { P: G.player, O1: o[0], O2: o[1], T: G.flags.target || o[0] };
+  return String(s).replace(/\{(P|O1|O2|T)(?::(\w+))?\}/g, (m, k, c) => nf(who[k], c));
 }
 
 // ---------- title ----------
@@ -863,12 +868,12 @@ function TitleScene() {
       const wob = Math.sin(t * 3) * 3;
       T('MIESTEN', W / 2, 24 + wob, { align: 'center', size: 30, c: '#ffd166' });
       T('ILLANVIETTO', W / 2, 58 + wob, { align: 'center', size: 30, c: '#ff7aa8' });
-      T('A Saturday epic in pixels', W / 2, 98, { align: 'center', size: 10, c: '#f2e6c9' });
+      T('Lauantain eepos pikseleinä', W / 2, 98, { align: 'center', size: 10, c: '#f2e6c9' });
       panel(60, 114, 360, 34, 'rgba(10,10,30,0.8)');
-      T('Pick your guy:  ◄ ►   then press A', W / 2, 155, { align: 'center', size: 10 });
-      T('You can switch characters any time (C / SWITCH)', W / 2, 133, { align: 'center', size: 8, c: '#b8b0a0' });
-      if (Math.floor(t * 2) % 2 === 0) T('PRESS A TO START', W / 2, 160, { align: 'center', size: 12, c: '#fff' });
-      T('v1.0  |  8-bit sound on: tap a button', W / 2, 258, { align: 'center', size: 8, c: '#8c88a0' });
+      T('Valitse jätkäsi:  ◄ ►   ja paina A', W / 2, 155, { align: 'center', size: 10 });
+      T('Voit vaihtaa hahmoa milloin vain (C / VAIHDA)', W / 2, 133, { align: 'center', size: 8, c: '#b8b0a0' });
+      if (Math.floor(t * 2) % 2 === 0) T('ALOITA PAINAMALLA A', W / 2, 160, { align: 'center', size: 12, c: '#fff' });
+      T('v1.0  |  8-bittinen ääni alkaa napin painalluksesta', W / 2, 258, { align: 'center', size: 8, c: '#8c88a0' });
       drawToast();
     },
   };
@@ -899,7 +904,7 @@ function Card(o) {
       rect(0, 0, W, H, '#07060d');
       for (let i = 0; i < 70; i++) rect((i * 131 + Math.floor(t * 10) * 17) % W, (i * 71 + Math.floor(t * 10) * 7) % H, 1, 1, 'rgba(255,255,255,0.12)');
       rect(0, 0, W, 26, '#000'); rect(0, H - 26, W, 26, '#000');
-      T('EPISODE ' + o.ep, W / 2, 40, { align: 'center', size: 11, c: '#c9a24a' });
+      T('JAKSO ' + o.ep, W / 2, 40, { align: 'center', size: 11, c: '#c9a24a' });
       rect(W / 2 - 80, 56, 160, 1, '#c9a24a');
       T(o.title.toUpperCase(), W / 2, 66, { align: 'center', size: 26, c: '#f6efd8' });
       rect(W / 2 - 80, 102, 160, 1, '#c9a24a');
@@ -908,13 +913,13 @@ function Card(o) {
       lines.forEach((l, i) => T(l, W / 2, 118 + i * 13, { align: 'center', size: 10, c: '#cfc6b0' }));
       const hasChoice = o.suggest && G.player !== o.suggest;
       if (hasChoice && typed >= body.length) {
-        T('Suggested hero for this episode:', W / 2, 188, { align: 'center', size: 9, c: '#b8b0a0' });
-        const a = (choice === 0 ? '► ' : '  ') + 'Play as ' + nm(o.suggest).toUpperCase();
-        const b = (choice === 1 ? '► ' : '  ') + 'Keep ' + nm(G.player).toUpperCase();
+        T('Jakson ehdotettu sankari:', W / 2, 188, { align: 'center', size: 9, c: '#b8b0a0' });
+        const a = (choice === 0 ? '► ' : '  ') + 'Pelaa: ' + nm(o.suggest).toUpperCase();
+        const b = (choice === 1 ? '► ' : '  ') + 'Jatka: ' + nm(G.player).toUpperCase();
         T(a, W / 2 - 70, 202, { align: 'left', size: 11, c: choice === 0 ? CH[o.suggest].color : '#8c88a0' });
         T(b, W / 2 - 70, 218, { align: 'left', size: 11, c: choice === 1 ? CH[G.player].color : '#8c88a0' });
       } else if (typed >= body.length && Math.floor(t * 2) % 2 === 0) {
-        T('A: continue', W / 2, 210, { align: 'center', size: 10, c: '#f2e6c9' });
+        T('A: jatka', W / 2, 210, { align: 'center', size: 10, c: '#f2e6c9' });
       }
       if (o.note) T(o.note, W / 2, 244, { align: 'center', size: 8, c: '#7a7690' });
       drawToast();
@@ -1033,13 +1038,13 @@ const sk = (k) => SKILL[k][G.player];
 
 // ---------- shop ----------
 const SHOP_ITEMS = [
-  { id: 'beer', name: 'Beer, 12 cans', price: 12 },
-  { id: 'sausage', name: 'Grill sausages', price: 6 },
-  { id: 'onion', name: 'Onions (the good ones)', price: 2 },
-  { id: 'chips', name: 'Chips & dip', price: 4 },
-  { id: 'mustard', name: 'Mustard of destiny', price: 2 },
-  { id: 'herring', name: 'Suspicious herring', price: 5 },
-  { id: 'cards', name: 'Fresh deck of cards', price: 3 },
+  { id: 'beer', name: 'Kalja, 12 tölkkiä', price: 12 },
+  { id: 'sausage', name: 'Grillimakkarat', price: 6 },
+  { id: 'onion', name: 'Sipulit (ne hyvät)', price: 2 },
+  { id: 'chips', name: 'Sipsit ja dippi', price: 4 },
+  { id: 'mustard', name: 'Kohtalon sinappi', price: 2 },
+  { id: 'herring', name: 'Epäilyttävä silakka', price: 5 },
+  { id: 'cards', name: 'Uusi korttipakka', price: 3 },
 ];
 function ShopScene(o) {
   let sel = 0, t = 0, msg = '', picked = {};
@@ -1047,7 +1052,7 @@ function ShopScene(o) {
   const total = () => SHOP_ITEMS.reduce((a, it) => a + (picked[it.id] ? it.price : 0), 0);
   return {
     music: 'day', noSwitch: false,
-    enter() { t = 0; sel = 0; picked = {}; msg = 'Budget: ' + BUDGET + ' EUR. Pick wisely.'; },
+    enter() { t = 0; sel = 0; picked = {}; msg = 'Budjetti: ' + BUDGET + ' €. Valitse viisaasti.'; },
     bot() { if (sel < SHOP_ITEMS.length) { if (sel < 3 && !picked[SHOP_ITEMS[sel].id]) Input.pressed.a = true; else Input.pressed.down = true; } else Input.pressed.a = true; },
     update(dt) {
       t += dt;
@@ -1058,7 +1063,7 @@ function ShopScene(o) {
         if (sel < SHOP_ITEMS.length) {
           const it = SHOP_ITEMS[sel];
           if (picked[it.id]) { delete picked[it.id]; Snd.sfx('back'); }
-          else if (total() + it.price > BUDGET) { Snd.sfx('bad'); msg = 'Not enough money for that!'; }
+          else if (total() + it.price > BUDGET) { Snd.sfx('bad'); msg = 'Rahat eivät riitä siihen!'; }
           else { picked[it.id] = true; Snd.sfx('coin'); msg = ''; }
         } else {
           G.shop = Object.assign({}, picked);
@@ -1067,8 +1072,8 @@ function ShopScene(o) {
           if (picked.cards) G.flags.freshCards = true;
           if (picked.herring) G.flags.herring = true;
           if (picked.chips) addMood(3);
-          const items = SHOP_ITEMS.filter(i => picked[i.id]).map(i => i.name.toLowerCase()).join(', ') || 'absolutely nothing';
-          logEvent('shop', 'The shopping list: ' + items + '. Cashier verdict: "Interesting."');
+          const items = SHOP_ITEMS.filter(i => picked[i.id]).map(i => i.name.toLowerCase()).join(', ') || 'ei yhtään mitään';
+          logEvent('shop', 'Ostoslista: ' + items + '. Kassan tuomio: "Mielenkiintoista."');
           Snd.sfx('good');
           o.done();
         }
@@ -1077,20 +1082,20 @@ function ShopScene(o) {
     draw() {
       BG.shop(t);
       panel(16, 22, 300, 220, '#141a33');
-      T('THE SHOP', 30, 30, { size: 14, c: '#ffd166' });
+      T('KAUPPA', 30, 30, { size: 14, c: '#ffd166' });
       SHOP_ITEMS.forEach((it, i) => {
         const y = 56 + i * 22, on = picked[it.id];
         T((sel === i ? '► ' : '  ') + (on ? '[x] ' : '[ ] ') + it.name, 28, y, { size: 10, c: sel === i ? '#ffd166' : (on ? '#8fe36a' : '#f2e6c9') });
-        T(it.price + ' EUR', 306, y, { size: 10, align: 'right', c: '#b8b0a0' });
+        T(it.price + ' €', 306, y, { size: 10, align: 'right', c: '#b8b0a0' });
       });
-      T((sel === SHOP_ITEMS.length ? '► ' : '  ') + 'PAY & LEAVE', 28, 56 + SHOP_ITEMS.length * 22 + 6, { size: 11, c: sel === SHOP_ITEMS.length ? '#ffd166' : '#ff7aa8' });
+      T((sel === SHOP_ITEMS.length ? '► ' : '  ') + 'MAKSA JA LÄHDE', 28, 56 + SHOP_ITEMS.length * 22 + 6, { size: 11, c: sel === SHOP_ITEMS.length ? '#ffd166' : '#ff7aa8' });
       panel(330, 22, 134, 110, '#141a33');
-      T('CART', 340, 30, { size: 11, c: '#ffd166' });
-      T('Total: ' + total() + ' EUR', 340, 50, { size: 10 });
-      T('Left:  ' + (BUDGET - total()) + ' EUR', 340, 64, { size: 10, c: BUDGET - total() < 4 ? '#ff7a7a' : '#8fe36a' });
+      T('KORI', 340, 30, { size: 11, c: '#ffd166' });
+      T('Yhteensä: ' + total() + ' €', 340, 50, { size: 10 });
+      T('Jäljellä: ' + (BUDGET - total()) + ' €', 340, 64, { size: 10, c: BUDGET - total() < 4 ? '#ff7a7a' : '#8fe36a' });
       wrap(msg, 120, 8).forEach((l, i) => T(l, 340, 86 + i * 10, { size: 8, c: '#cdd8ff' }));
       Sprites.draw(ctx, G.player, 'out', 395, 250, { flip: true });
-      T('Up/Down, A = pick', 400, 148, { size: 8, align: 'center', c: '#8c88a0' });
+      T('Ylös/alas, A = valitse', 400, 148, { size: 8, align: 'center', c: '#8c88a0' });
       drawHUD(); drawToast();
     },
   };
@@ -1152,7 +1157,7 @@ function RCScene(o) {
           this.rating = time < 16 ? 'S' : time < 21 ? 'A' : time < 29 ? 'B' : 'C';
           addMood({ S: 8, A: 5, B: 2, C: 0 }[this.rating]);
           Snd.sfx('finish');
-          logEvent('rc', nm(G.player) + ' drove the RC course in ' + time.toFixed(1) + ' seconds with ' + hits + ' cone casualt' + (hits === 1 ? 'y' : 'ies') + '.', true);
+          logEvent('rc', nm(G.player) + ' ajoi radio-ohjattavan auton radan ajassa ' + time.toFixed(1).replace('.', ',') + ' sekuntia ' + hits + ' kaatuneella kartiolla.', true);
           G.stats.rc = time;
         } else Snd.sfx('checkpoint');
       }
@@ -1185,16 +1190,16 @@ function RCScene(o) {
       ctx.restore();
       // HUD
       drawHUD();
-      T('TIME ' + (time + (state === 'done' ? 0 : penalty)).toFixed(1), 6, 36, { size: 10, c: '#fff' });
-      T('Cones: ' + hits, 6, 48, { size: 8, c: '#ff9a4a' });
-      T('Up/A gas  Down brake  Left/Right steer', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
-      if (state === 'ready') { T(this.ready > 1 ? 'GET READY...' : 'GO!', W / 2, 110, { size: 26, align: 'center', c: '#ffd166' }); T('Tuomas drives best (C to switch)', W / 2, 146, { size: 8, align: 'center', c: '#b8b0a0' }); }
+      T('AIKA ' + (time + (state === 'done' ? 0 : penalty)).toFixed(1).replace('.', ','), 6, 36, { size: 10, c: '#fff' });
+      T('Kartiot: ' + hits, 6, 48, { size: 8, c: '#ff9a4a' });
+      T('Ylös/A kaasu  Alas jarru  Vasen/oikea ohjaus', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
+      if (state === 'ready') { T(this.ready > 1 ? 'VALMISTAUDU...' : 'LÄHTÖ!', W / 2, 110, { size: 26, align: 'center', c: '#ffd166' }); T('Tuomas ajaa parhaiten (C vaihtaa)', W / 2, 146, { size: 8, align: 'center', c: '#b8b0a0' }); }
       if (state === 'done') {
         panel(130, 80, 220, 90, '#10162e');
-        T('FINISH!', W / 2, 90, { size: 16, align: 'center', c: '#ffd166' });
-        T('Time ' + time.toFixed(1) + 's (incl. penalties)', W / 2, 114, { size: 10, align: 'center' });
-        T('Rating: ' + this.rating, W / 2, 130, { size: 14, align: 'center', c: '#8fe36a' });
-        T('A: continue', W / 2, 152, { size: 8, align: 'center', c: '#b8b0a0' });
+        T('MAALI!', W / 2, 90, { size: 16, align: 'center', c: '#ffd166' });
+        T('Aika ' + time.toFixed(1).replace('.', ',') + ' s (sis. rangaistukset)', W / 2, 114, { size: 10, align: 'center' });
+        T('Arvosana: ' + this.rating, W / 2, 130, { size: 14, align: 'center', c: '#8fe36a' });
+        T('A: jatka', W / 2, 152, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },
@@ -1247,7 +1252,7 @@ function DroneScene(o) {
         if (dist(pad[0], pad[1], d.x, d.y) < 22 && sp < 45) {
           landed = true; state = 'done'; Snd.sfx('finish'); addMood(8);
           result = { landed: true, tree: false, rings: idx };
-          logEvent('drone_land', nm(G.player) + ' landed the drone perfectly. Everyone assumed it was luck.', true);
+          logEvent('drone_land', nm(G.player) + ' laskeutui dronella täydellisesti. Kaikki olettivat sen olleen tuuria.', true);
         } else this.crash(false);
       }
     },
@@ -1269,8 +1274,8 @@ function DroneScene(o) {
       result = { landed: false, tree: hitTree, rings: idx };
       G.flags.droneTree = hitTree; G.flags.droneCrash = true;
       logEvent(hitTree ? 'drone_tree' : 'drone_crash', hitTree
-        ? "Tuomas's drone met a tree. The tree won."
-        : "Tuomas's drone met the ground at an optimistic speed.", true);
+        ? 'Tuomaksen drone kohtasi puun. Puu voitti.'
+        : 'Tuomaksen drone kohtasi maan toiveikkaalla nopeudella.', true);
     },
     draw() {
       ctx.save();
@@ -1304,18 +1309,18 @@ function DroneScene(o) {
       ctx.restore();
       ctx.restore();
       drawHUD();
-      T('BATTERY', 6, 36, { size: 8 }); bar(52, 37, 60, 5, bat / 60, bat < 12 ? '#ff4a4a' : '#7cf04a');
-      T('Rings: ' + Math.min(idx, rings.length) + '/' + rings.length, 6, 48, { size: 8, c: '#ffd166' });
-      if (idx >= rings.length && state === 'fly') T('LAND ON THE H PAD: slow down and press A!', W / 2, 20, { size: 10, align: 'center', c: '#ffd166' });
-      if (wind[0] || wind[1]) T('WIND!', W - 60, 40, { size: 10, c: '#bfe3ff' });
-      T('Arrows: fly', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
-      if (state === 'ready') { T(this.ready > 1 ? 'PRE-FLIGHT CHECK...' : 'TAKEOFF!', W / 2, 110, { size: 22, align: 'center', c: '#ffd166' }); T('Fly through the rings. Avoid the trees. (Good luck.)', W / 2, 142, { size: 9, align: 'center', c: '#fff' }); }
-      if (state === 'crash') T(tree ? 'CRASH! Into a tree!' : 'CRASH!', W / 2, 100, { size: 20, align: 'center', c: '#ff4a4a' });
+      T('AKKU', 6, 36, { size: 8 }); bar(52, 37, 60, 5, bat / 60, bat < 12 ? '#ff4a4a' : '#7cf04a');
+      T('Renkaat: ' + Math.min(idx, rings.length) + '/' + rings.length, 6, 48, { size: 8, c: '#ffd166' });
+      if (idx >= rings.length && state === 'fly') T('LASKEUDU H-ALUSTALLE: hidasta ja paina A!', W / 2, 20, { size: 10, align: 'center', c: '#ffd166' });
+      if (wind[0] || wind[1]) T('TUULTA!', W - 60, 40, { size: 10, c: '#bfe3ff' });
+      T('Nuolet: lennä', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
+      if (state === 'ready') { T(this.ready > 1 ? 'LENTOA EDELTÄVÄ TARKISTUS...' : 'NOUSU!', W / 2, 110, { size: 22, align: 'center', c: '#ffd166' }); T('Lennä renkaiden läpi. Vältä puut. (Onnea.)', W / 2, 142, { size: 9, align: 'center', c: '#fff' }); }
+      if (state === 'crash') T(tree ? 'ONNETTOMUUS! Puuhun!' : 'ONNETTOMUUS!', W / 2, 100, { size: 20, align: 'center', c: '#ff4a4a' });
       if (state === 'done') {
         panel(130, 80, 220, 80, '#10162e');
-        T(landed ? 'PERFECT LANDING' : (tree ? 'TREE: 1  DRONE: 0' : 'THE DRONE IS DOWN'), W / 2, 92, { size: 13, align: 'center', c: landed ? '#8fe36a' : '#ff7a7a' });
-        T('Rings: ' + Math.min(idx, rings.length) + ' / ' + rings.length, W / 2, 116, { size: 10, align: 'center' });
-        T('A: continue', W / 2, 140, { size: 8, align: 'center', c: '#b8b0a0' });
+        T(landed ? 'TÄYDELLINEN LASKEUTUMINEN' : (tree ? 'PUU: 1  DRONE: 0' : 'DRONE ON ALAS'), W / 2, 92, { size: 13, align: 'center', c: landed ? '#8fe36a' : '#ff7a7a' });
+        T('Renkaat: ' + Math.min(idx, rings.length) + ' / ' + rings.length, W / 2, 116, { size: 10, align: 'center' });
+        T('A: jatka', W / 2, 140, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },
@@ -1373,7 +1378,7 @@ function TimingScene(cfg) {
     applyWobble(G.bac[G.player] * 1.0, t);
     drawHUD();
     T(cfg.title, W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
-    T('Round ' + Math.min(round + 1, cfg.rounds) + ' / ' + cfg.rounds, W / 2, 50, { size: 9, align: 'center', c: '#fff' });
+    T('Kierros ' + Math.min(round + 1, cfg.rounds) + ' / ' + cfg.rounds, W / 2, 50, { size: 9, align: 'center', c: '#fff' });
     // bar
     const bx = 90, bw = 300, by = 226;
     panel(bx - 8, by - 20, bw + 16, 44, '#10162e');
@@ -1409,7 +1414,7 @@ function EnduranceScene(o) {
         comp[c] -= base[c] * (1 + t / 18) * d * (1 + 0.15 * Math.sin(t * 3 + c.length));
         if (comp[c] <= 0) {
           out[c] = true; Snd.sfx(c === G.player ? 'bad' : 'hot');
-          quip = c === 'rauno' ? 'Rauno: "My thermal tolerance has been exceeded."' : c === 'antti' ? 'Antti: "The sausages need me."' : 'Tuomas: "I am going to check on the drone."';
+          quip = c === 'rauno' ? 'Rauno: "Lämpötoleranssini on ylittynyt."' : c === 'antti' ? 'Antti: "Makkarat tarvitsevat minua."' : 'Tuomas: "Menen katsomaan dronea."';
           quipT = 2.2;
         }
       });
@@ -1419,7 +1424,7 @@ function EnduranceScene(o) {
         Snd.sfx(winner === G.player ? 'win' : 'lose');
         addMood(winner === G.player ? 6 : 3);
         G.flags.saunaWinner = winner;
-        logEvent('endurance', nm(winner) + ' won the sauna endurance contest and refused to talk about it humbly.', true);
+        logEvent('endurance', nm(winner) + ' voitti saunan kestävyyskisan eikä suostunut puhumaan siitä nöyrästi.', true);
       }
     },
     draw() {
@@ -1440,14 +1445,14 @@ function EnduranceScene(o) {
         rect(sx, sy, 3, 3, 'rgba(255,255,255,0.25)');
       }
       drawHUD();
-      T('SAUNA ENDURANCE', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
-      T(out[G.player] ? 'You are out! Watching the rest...' : 'MASH A to stay in the heat! Last man standing wins.', W / 2, 52, { size: 9, align: 'center', c: '#fff' });
-      T('Heat: ' + Math.round(40 + t * 1.2) + ' C', W / 2, 66, { size: 9, align: 'center', c: '#ff9a4a' });
+      T('SAUNAN KESTÄVYYSKISA', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
+      T(out[G.player] ? 'Putosit! Katsot loput...' : 'HAKKAA A:ta pysyäksesi kuumassa! Viimeinen pystyssä voittaa.', W / 2, 52, { size: 9, align: 'center', c: '#fff' });
+      T('Kuumuus: ' + Math.round(40 + t * 1.2) + ' °C', W / 2, 66, { size: 9, align: 'center', c: '#ff9a4a' });
       if (quipT > 0) { panel(100, 100, 280, 22, '#10162e'); T(quip, W / 2, 106, { size: 9, align: 'center' }); }
       if (state === 'result') {
         panel(120, 128, 240, 56, '#10162e');
-        T(nm(winner).toUpperCase() + ' WINS!', W / 2, 136, { size: 16, align: 'center', c: CH[winner].color });
-        T('A: continue', W / 2, 164, { size: 8, align: 'center', c: '#b8b0a0' });
+        T(nm(winner).toUpperCase() + ' VOITTAA!', W / 2, 136, { size: 16, align: 'center', c: CH[winner].color });
+        T('A: jatka', W / 2, 164, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },
@@ -1469,8 +1474,8 @@ function HugScene(o) {
         tl -= dt;
         meter = Math.max(0, meter - 10 * dt);
         if (Input.pressed.a) { meter += 8; Snd.sfx('tick'); if (Math.random() < 0.5) hearts.push({ x: 240 + rnd(-40, 40), y: 190, life: 1.5 }); }
-        if (meter >= 100) { state = 'result'; ok = true; resultT = 0; Snd.sfx('love'); addMood(9); G.flags.hug = true; logEvent('hug', 'Three grown men hugged in towels. Nobody mentioned it again. Everybody remembered it.', true); }
-        else if (tl <= 0) { state = 'result'; ok = false; resultT = 0; Snd.sfx('bad'); addMood(2); logEvent('hug_fail', 'An awkward pat on the back was exchanged. Respect was mutual.', true); }
+        if (meter >= 100) { state = 'result'; ok = true; resultT = 0; Snd.sfx('love'); addMood(9); G.flags.hug = true; logEvent('hug', 'Kolme aikuista miestä halasi pyyhkeissä. Kukaan ei maininnut siitä enää. Kaikki muistivat sen.', true); }
+        else if (tl <= 0) { state = 'result'; ok = false; resultT = 0; Snd.sfx('bad'); addMood(2); logEvent('hug_fail', 'Vaihdettiin kömpelöt selkääntaputukset. Kunnioitus oli molemminpuolista.', true); }
       } else { resultT += dt; if (Input.pressed.a && resultT > 0.8) o.done({ ok }); if (Math.random() < 0.3) hearts.push({ x: 240 + rnd(-60, 60), y: 200, life: 1.5 }); }
     },
     draw() {
@@ -1484,14 +1489,14 @@ function HugScene(o) {
       });
       hearts.forEach(h => T('♥', h.x, h.y, { size: 14, c: '#ff5a8a', align: 'center' }));
       drawHUD();
-      T('THE HUG', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
-      T('MASH A to close the distance (it is awkward)', W / 2, 50, { size: 9, align: 'center', c: '#fff' });
+      T('HALI', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
+      T('HAKKAA A:ta lyhentääksesi etäisyyttä (se on kiusallista)', W / 2, 50, { size: 9, align: 'center', c: '#fff' });
       bar(140, 66, 200, 10, p, '#ff5a8a');
-      if (state === 'play') T('Time: ' + Math.ceil(tl), W / 2, 82, { size: 9, align: 'center' });
+      if (state === 'play') T('Aika: ' + Math.ceil(tl), W / 2, 82, { size: 9, align: 'center' });
       if (state === 'result') {
         panel(110, 96, 260, 50, '#10162e');
-        T(ok ? 'GROUP HUG! (mood up)' : 'A manly pat on the back.', W / 2, 106, { size: 12, align: 'center', c: ok ? '#ff7aa8' : '#cdd8ff' });
-        T('A: continue', W / 2, 128, { size: 8, align: 'center', c: '#b8b0a0' });
+        T(ok ? 'RYHMÄHALI! (tunnelma nousee)' : 'Miehekäs selkääntaputus.', W / 2, 106, { size: 12, align: 'center', c: ok ? '#ff7aa8' : '#cdd8ff' });
+        T('A: jatka', W / 2, 128, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },
@@ -1502,7 +1507,7 @@ function HugScene(o) {
 function CookScene(o) {
   const hasSausage = !G.flags.noSausage;
   const n = hasSausage ? 5 : 3;
-  const label = hasSausage ? 'sausage' : 'noodle block';
+  const label = hasSausage ? 'makkarat' : 'nuudelit', labelPar = hasSausage ? 'makkaraa' : 'nuudelipalaa';
   let phase, chop, chopT, chopNeed, items, cursor, t, done, shown, resultT, burnt, score, sizT;
   const antti = () => G.player === 'antti';
   return {
@@ -1545,7 +1550,7 @@ function CookScene(o) {
             it.state = 'out';
             it.q = it.c >= this.lo && it.c <= this.hi ? 2 : (it.c > 0.45 ? 1 : 0);
             Snd.sfx(it.q === 2 ? 'coin' : it.q === 1 ? 'select' : 'bad');
-            if (it.q === 2 && !G.flags.goldenSnap) { G.flags.goldenSnap = true; logEvent('golden', 'One sausage reached golden perfection. A single tear was shed in the kitchen.', true); }
+            if (it.q === 2 && !G.flags.goldenSnap) { G.flags.goldenSnap = true; logEvent('golden', 'Yksi makkara saavutti kullanruskean täydellisyyden. Keittiössä vuodatettiin yksi kyynel.', true); }
           }
         }
         if (items.every(it => it.state !== 'pan')) {
@@ -1556,9 +1561,9 @@ function CookScene(o) {
           addHunger(-(25 + 45 * pct)); addMood(Math.round(9 * pct) - burnt * 2);
           G.flags.burnt = burnt; G.flags.cookPct = pct;
           const who = nm(G.player);
-          logEvent('cook', pct > 0.8 ? who + ' cooked the ' + label + 's to golden perfection. A moment of silence was observed.'
-            : burnt >= 2 ? who + ' cooked ' + burnt + ' ' + label + 's into charcoal. The fire alarm was not consulted.'
-            : who + ' cooked an honest dinner. Everyone ate it.', true);
+          logEvent('cook', pct > 0.8 ? who + ' paistoi ' + label + ' kullanruskeiksi. Pidettiin hiljainen hetki.'
+            : burnt >= 2 ? who + ' paistoi ' + burnt + ' ' + labelPar + ' hiileksi. Palohälytintä ei konsultoitu.'
+            : who + ' valmisti rehellisen illallisen. Kaikki söivät sen.', true);
           Snd.sfx(pct > 0.6 ? 'win' : 'lose');
         }
         return;
@@ -1577,10 +1582,10 @@ function CookScene(o) {
         for (let i = 0; i < chop; i++) rect(180 + (i * 17) % 120, 196 + (i * 7) % 14, 5, 3, '#efe0a0');
         const kx = 240 + Math.sin(t * 40) * 20 * (Input.down.a ? 1 : 0.2);
         rect(kx - 2, 130, 4, 40, '#cfd3da'); rect(kx - 3, 130, 6, 10, '#333');
-        T('CHOP THE ONIONS', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
-        T('MASH A! ' + chop + ' / ' + chopNeed, W / 2, 52, { size: 10, align: 'center', c: '#fff' });
+        T('PILKO SIPULIT', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
+        T('HAKKAA A:ta! ' + chop + ' / ' + chopNeed, W / 2, 52, { size: 10, align: 'center', c: '#fff' });
         bar(150, 68, 180, 8, chop / chopNeed, '#efe0a0');
-        T('Time: ' + Math.ceil(chopT), W / 2, 84, { size: 9, align: 'center' });
+        T('Aika: ' + Math.ceil(chopT), W / 2, 84, { size: 9, align: 'center' });
       } else {
         ctx.fillStyle = '#2b2b30'; ctx.beginPath(); ctx.ellipse(240, 188, 205, 52, 0, 0, 7); ctx.fill();
         ctx.fillStyle = '#3a3a42'; ctx.beginPath(); ctx.ellipse(240, 184, 190, 44, 0, 0, 7); ctx.fill();
@@ -1596,18 +1601,18 @@ function CookScene(o) {
           if (it.state === 'burnt') for (let s = 0; s < 3; s++) rect(xx - 6 + s * 6, y - 8 - ((t * 20 + s * 9) % 24), 3, 4, 'rgba(180,180,180,0.5)');
           if (it.state === 'pan') { const g = clamp(it.c, 0, 1.2); bar(xx - 20, y + 20, 40, 4, g / 1.2, g > this.hi ? '#ff4a4a' : g >= this.lo ? '#7cf04a' : '#f0a090'); }
         });
-        T('FRY THE ' + label.toUpperCase() + 'S', W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
-        T('Left/Right pick, A takes it off. Golden zone = green bar!', W / 2, 52, { size: 9, align: 'center', c: '#fff' });
-        if (!hasSausage) T('No sausages bought... emergency noodles.', W / 2, 66, { size: 8, align: 'center', c: '#ff9a7a' });
+        T('PAISTA ' + label.toUpperCase(), W / 2, 30, { size: 16, align: 'center', c: '#ffd166' });
+        T('Vasen/oikea valitsee, A ottaa pois. Kultainen alue = vihreä palkki!', W / 2, 52, { size: 9, align: 'center', c: '#fff' });
+        if (!hasSausage) T('Makkaroita ei ostettu... hätänuudelit.', W / 2, 66, { size: 8, align: 'center', c: '#ff9a7a' });
       }
       Sprites.draw(ctx, G.player, 'in', 56, 262, { flip: false });
       drawHUD();
-      if (G.player !== 'antti') T('Antti is the kitchen master (C to switch)', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
+      if (G.player !== 'antti') T('Antti on keittiön mestari (C vaihtaa)', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
       if (phase === 'result') {
         panel(110, 90, 260, 70, '#10162e');
-        T(this.pct > 0.8 ? 'MASTERCHEF!' : this.pct > 0.45 ? 'Edible!' : 'Questionable...', W / 2, 98, { size: 15, align: 'center', c: this.pct > 0.45 ? '#8fe36a' : '#ff9a7a' });
-        T('Burnt: ' + burnt + '   Score: ' + score + '/' + (2 * n), W / 2, 122, { size: 10, align: 'center' });
-        T('A: continue', W / 2, 142, { size: 8, align: 'center', c: '#b8b0a0' });
+        T(this.pct > 0.8 ? 'MESTARIKOKKI!' : this.pct > 0.45 ? 'Syötävää!' : 'Kyseenalaista...', W / 2, 98, { size: 15, align: 'center', c: this.pct > 0.45 ? '#8fe36a' : '#ff9a7a' });
+        T('Palaneet: ' + burnt + '   Pisteet: ' + score + '/' + (2 * n), W / 2, 122, { size: 10, align: 'center' });
+        T('A: jatka', W / 2, 142, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },
@@ -1618,7 +1623,7 @@ function CookScene(o) {
 // Lightweight poker: 3 players, 2 hole cards, flop + (turn,river) with two betting rounds, best-of-7 showdown.
 // AI personalities: tuomas = loose aggressive, antti = tight aggressive, rauno = loose passive.
 
-const HAND_NAMES = ['High card', 'Pair', 'Two pair', 'Three of a kind', 'Straight', 'Flush', 'Full house', 'Four of a kind', 'Straight flush'];
+const HAND_NAMES = ['Hai kortti', 'Pari', 'Kaksi paria', 'Kolmoset', 'Suora', 'Väri', 'Täyskäsi', 'Neloset', 'Värisuora'];
 const RANK_TXT = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
 const SUIT_BITS = [
   ['..X..', '.XXX.', 'XXXXX', 'XXXXX', '..X..'],   // spade
@@ -1710,9 +1715,9 @@ function aiDecide(who, s, toCall, canRaise) {
   return a;
 }
 const QUIPS = {
-  tuomas: { raise: ['Raise! Feel the heat.', 'Bluff? Me? Never.', 'More chips, more fun!'], call: ['Call.', 'Sure, why not.'], fold: ['Fine, fine.', 'I fold. Tactically.'] },
-  antti: { raise: ['Raise. Do not doubt me.', 'I have it.', 'Raise.'], call: ['Call.', 'Hmm. Call.'], fold: ['Fold.', 'Not this time.'] },
-  rauno: { raise: ['A modest raise. Statistically justified.'], call: ['Call. Out of curiosity.', 'I shall call, for science.', 'Call. It feels right.'], fold: ['I shall observe.', 'Fold. Suboptimal.'] },
+  tuomas: { raise: ['Korotus! Tuntuuko kuumuus?', 'Bluffi? Minäkö? En koskaan.', 'Lisää merkkejä, lisää hauskaa!'], call: ['Maksan.', 'Miksi ei.'], fold: ['No jopas.', 'Luovutan. Taktisesti.'] },
+  antti: { raise: ['Korotan. Älä epäile.', 'Minulla on se.', 'Korotan.'], call: ['Maksan.', 'Hmm. Maksan.'], fold: ['Luovutan.', 'Ei tällä kertaa.'] },
+  rauno: { raise: ['Vaatimaton korotus. Tilastollisesti perusteltu.'], call: ['Maksan. Uteliaisuudesta.', 'Maksan tieteen nimissä.', 'Maksan. Se tuntuu oikealta.'], fold: ['Tarkkailen sivusta.', 'Luovutan. Epäoptimaalista.'] },
 };
 
 function drawSuit(x, y, s, col, sc) {
@@ -1763,7 +1768,7 @@ function PokerScene(o) {
     NAMES.forEach(c => pay(c, 5));
     order = []; for (let i = 0; i < 3; i++) order.push(NAMES[(handNo + i) % 3]);
     bubbles = {}; stage = 0; S.noSwitch = true; reveal = false;
-    msg = 'Hand ' + (handNo + 1) + ' of ' + o.hands + '. Ante 5 each. Dealing...';
+    msg = 'Käsi ' + (handNo + 1) + '/' + o.hands + '. Pakkopanos 5 kullekin. Jaetaan...';
     for (let i = 0; i < 6; i++) setTimeout(() => Snd.sfx('card'), i * 90);
     state = 'dealing'; timer = 1.2;
   }
@@ -1776,7 +1781,7 @@ function PokerScene(o) {
   }
   function startRound() {
     r = { level: 0, put: {}, acted: {}, raises: 0, idx: 0 };
-    msg = stage === 1 ? 'The flop is out. Betting.' : 'Turn and river are out. Final betting.';
+    msg = stage === 1 ? 'Flop on jaettu. Panostus.' : 'Turn ja river on jaettu. Viimeinen panostus.';
     nextTurn();
   }
   function nextActor() {
@@ -1796,21 +1801,20 @@ function PokerScene(o) {
       const toCall = r.level - (r.put[me] || 0);
       const canRaise = r.raises < 2 && G.chips[me] > toCall;
       opts = [];
-      if (toCall > 0) { opts.push({ k: 'fold', t: 'FOLD' }); opts.push({ k: 'call', t: 'CALL ' + Math.min(toCall, G.chips[me]) }); }
-      else opts.push({ k: 'call', t: 'CHECK' });
-      if (canRaise) opts.push({ k: 'raise', t: (toCall > 0 ? 'RAISE +' : 'BET ') + bet[stage] });
+      if (toCall > 0) { opts.push({ k: 'fold', t: 'LUOVUTA' }); opts.push({ k: 'call', t: 'MAKSA ' + Math.min(toCall, G.chips[me]) }); }
+      else opts.push({ k: 'call', t: 'PASSAA' });
+      if (canRaise) opts.push({ k: 'raise', t: (toCall > 0 ? 'KOROTA +' : 'PANOSTA ') + bet[stage] });
       sel = opts.length > 1 && toCall > 0 ? 1 : 0;
     } else { state = 'ai'; timer = 0.9; }
   }
   function act(p, a) {
     const toCall = r.level - (r.put[p] || 0);
     r.acted[p] = true;
-    let label;
-    if (a === 'fold' && toCall > 0) { hand.folded[p] = true; label = 'FOLD'; Snd.sfx('back'); }
-    else if (a === 'raise' && r.raises < 2 && G.chips[p] > toCall) { pay(p, toCall + bet[stage]); r.level += bet[stage]; r.raises++; label = toCall > 0 ? 'RAISE +' + bet[stage] : 'BET ' + bet[stage]; Snd.sfx('chip'); }
-    else { pay(p, toCall); label = toCall > 0 ? 'CALL ' + toCall : 'CHECK'; if (toCall > 0) Snd.sfx('chip'); }
+    let label, kind = 'call';
+    if (a === 'fold' && toCall > 0) { hand.folded[p] = true; label = 'LUOVUTA'; kind = 'fold'; Snd.sfx('back'); }
+    else if (a === 'raise' && r.raises < 2 && G.chips[p] > toCall) { pay(p, toCall + bet[stage]); r.level += bet[stage]; r.raises++; label = toCall > 0 ? 'KOROTUS +' + bet[stage] : 'PANOS ' + bet[stage]; kind = 'raise'; Snd.sfx('chip'); }
+    else { pay(p, toCall); label = toCall > 0 ? 'MAKSU ' + toCall : 'PASSI'; if (toCall > 0) Snd.sfx('chip'); }
     if (p !== me && QUIPS[p] && Math.random() < 0.55) {
-      const kind = label.indexOf('FOLD') === 0 ? 'fold' : label.indexOf('CHECK') === 0 || label.indexOf('CALL') === 0 ? 'call' : 'raise';
       say(p, label + ': ' + pick(QUIPS[p][kind]));
     } else say(p, label);
     r.idx = (order.indexOf(p) + 1) % 3;
@@ -1818,13 +1822,13 @@ function PokerScene(o) {
   }
   function endRound() {
     if (stage >= 2) { finishHand(true); return; }
-    state = 'dealing'; timer = 0.8; msg = 'Next cards coming...';
+    state = 'dealing'; timer = 0.8; msg = 'Seuraavat kortit tulossa...';
   }
   function finishHand(showdown) {
     const act = activeList();
     let winners, name = '';
     reveal = showdown;
-    if (act.length === 1) { winners = act; name = 'everyone else folded'; }
+    if (act.length === 1) { winners = act; name = 'muut luovuttivat'; }
     else {
       let best = null; winners = [];
       act.forEach(c => {
@@ -1836,7 +1840,7 @@ function PokerScene(o) {
     }
     const share = Math.floor(hand.pot / winners.length);
     winners.forEach((w, i) => { G.chips[w] += share + (i === 0 ? hand.pot - share * winners.length : 0); G.pokerWins[w]++; });
-    lastWinMsg = winners.map(nm).join(' & ') + ' win' + (winners.length === 1 ? 's' : '') + ' ' + hand.pot + ' (' + name + ')';
+    lastWinMsg = winners.map(nm).join(' & ') + (winners.length === 1 ? ' voittaa ' : ' jakavat ') + hand.pot + ' (' + name + ')';
     msg = lastWinMsg;
     if (winners.indexOf(me) >= 0) { addMood(3); Snd.sfx('win'); } else { addMood(1); Snd.sfx('lose'); }
     const bigPot = hand.pot >= 70;
@@ -1872,9 +1876,9 @@ function PokerScene(o) {
       if (Input.pressed.a && resultT > 0.7) {
         handNo++;
         if (venue === 'home' ? handNo % 2 === 0 : true) {
-          drinkAll(1); Snd.sfx('clink'); Toast.show('Everyone takes a sip. Cheers!');
+          drinkAll(1); Snd.sfx('clink'); Toast.show('Kaikki ottavat huikan. Kippis!');
         }
-        if (handNo >= o.hands) { state = 'final'; resultT = 0; this.winnerChips = NAMES.slice().sort((a, b) => G.chips[b] - G.chips[a]); const w = this.winnerChips[0]; logEvent('poker_' + venue, nm(w) + ' won the ' + (venue === 'home' ? 'home poker night' : 'restaurant poker round') + ' with ' + G.chips[w] + ' chips.', true); G.flags['pokerWinner_' + venue] = w; }
+        if (handNo >= o.hands) { state = 'final'; resultT = 0; this.winnerChips = NAMES.slice().sort((a, b) => G.chips[b] - G.chips[a]); const w = this.winnerChips[0]; logEvent('poker_' + venue, nm(w) + ' voitti ' + (venue === 'home' ? 'kotipokeri-illan' : 'kuppilan pokerikierroksen') + ' ' + G.chips[w] + ' pelimerkillä.', true); G.flags['pokerWinner_' + venue] = w; }
         else startHand();
       }
     } else if (state === 'final') {
@@ -1893,7 +1897,7 @@ function PokerScene(o) {
       if (hand.board[i]) drawCard(x, y, hand.board[i], true);
       else { ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.strokeRect(x, y, 26, 36); }
     }
-    T('POT ' + hand.pot, 240, 108, { size: 12, align: 'center', c: '#ffd166' });
+    T('POTTI ' + hand.pot, 240, 108, { size: 12, align: 'center', c: '#ffd166' });
     for (let i = 0; i < Math.min(12, Math.floor(hand.pot / 10)); i++) circle(190 + i * 8, 130, 4, ['#d62c3a', '#2b4fb8', '#f0f0f0'][i % 3]);
     // seats
     NAMES.forEach(c => {
@@ -1903,13 +1907,13 @@ function PokerScene(o) {
       Sprites.head(ctx, c, 'in', p.x, p.y, 2, G.bac[c] > 0.35 ? 'drunk' : undefined);
       ctx.globalAlpha = 1;
       const isMe = c === me;
-      T(nm(c).toUpperCase() + (isMe ? ' (YOU)' : ''), p.x + 60, p.y + 4, { size: 10, c: CH[c].color });
-      T('Chips: ' + G.chips[c], p.x + 60, p.y + 17, { size: 9, c: '#fff' });
-      T({ rauno: 'loose-passive', tuomas: 'loose-aggro', antti: 'tight-aggro' }[c], p.x + 60, p.y + 29, { size: 7, c: '#9a96ae' });
+      T(nm(c).toUpperCase() + (isMe ? ' (SINÄ)' : ''), p.x + 60, p.y + 4, { size: 10, c: CH[c].color });
+      T('Merkit: ' + G.chips[c], p.x + 60, p.y + 17, { size: 9, c: '#fff' });
+      T({ rauno: 'löysä-passiivinen', tuomas: 'löysä-aggro', antti: 'tiukka-aggro' }[c], p.x + 60, p.y + 29, { size: 7, c: '#9a96ae' });
       if (!isMe) {
         const show = reveal && !folded;
         if (!folded) { drawCard(p.x + 58, p.y + 40, hand.hole[c][0], show); drawCard(p.x + 86, p.y + 40, hand.hole[c][1], show); }
-        else T('folded', p.x + 60, p.y + 50, { size: 9, c: '#9a96ae' });
+        else T('luovutti', p.x + 60, p.y + 50, { size: 9, c: '#9a96ae' });
       }
       const b = bubbles[c];
       if (b && b.t > 0) {
@@ -1929,27 +1933,27 @@ function PokerScene(o) {
       if (!folded && hand.board.length >= 3) { const v = bestOf(hand.hole[me].concat(hand.board)); T(HAND_NAMES[v[0]], 240, 178, { size: 8, align: 'center', c: '#cdd8ff' }); }
     }
     applyWobble(G.bac[me] * 0.8, t);
-    T('BEER', 418, 202, { size: 8 }); bar(446, 203, 22, 5, G.bac[me], '#f2a02e');
+    T('KALJA', 418, 202, { size: 8 }); bar(446, 203, 22, 5, G.bac[me], '#f2a02e');
     // bottom panel
     panel(8, 196, W - 16, 68, '#10162e');
     T(msg, 18, 202, { size: 10, c: '#f2e6c9' });
     if (state === 'human') {
       const toCall = r.level - (r.put[me] || 0);
-      T('Your move.  To call: ' + toCall + '   Pot: ' + hand.pot + '   (Left/Right, A)', 18, 218, { size: 8, c: '#9a96ae' });
+      T('Sinun vuorosi.  Maksettavaa: ' + toCall + '   Potti: ' + hand.pot + '   (vasen/oikea, A)', 18, 218, { size: 8, c: '#9a96ae' });
       opts.forEach((op, i) => {
         const x = 18 + i * 140;
         ctx.fillStyle = i === sel ? '#ffd166' : '#2a2f45'; ctx.fillRect(x, 232, 128, 24);
         T(op.t, x + 64, 238, { size: 11, align: 'center', c: i === sel ? '#101010' : '#f2e6c9', shadow: false });
       });
     } else if (state === 'ai') {
-      T(nm(actor) + ' is thinking...', 18, 224, { size: 10, c: '#9a96ae' });
+      T(nm(actor) + ' miettii...', 18, 224, { size: 10, c: '#9a96ae' });
     } else if (state === 'between') {
-      T(this.handsDone + ' / ' + o.hands + ' hands played.   A: next   C: switch guy', 18, 224, { size: 9, c: '#9a96ae' });
+      T(this.handsDone + ' / ' + o.hands + ' kättä pelattu.   A: seuraava   C: vaihda hahmoa', 18, 224, { size: 9, c: '#9a96ae' });
       if (Math.floor(t * 2) % 2 === 0) T('▼', W - 30, 244, { size: 10 });
     } else if (state === 'final') {
-      T('FINAL STANDINGS', 18, 218, { size: 10, c: '#ffd166' });
-      this.winnerChips.forEach((c, i) => T((i + 1) + '. ' + nm(c) + ': ' + G.chips[c] + ' chips', 18 + i * 150, 236, { size: 10, c: CH[c].color }));
-      T('A: continue', W - 20, 246, { size: 8, align: 'right', c: '#9a96ae' });
+      T('LOPPUTULOKSET', 18, 218, { size: 10, c: '#ffd166' });
+      this.winnerChips.forEach((c, i) => T((i + 1) + '. ' + nm(c) + ': ' + G.chips[c] + ' merkkiä', 18 + i * 150, 236, { size: 10, c: CH[c].color }));
+      T('A: jatka', W - 20, 246, { size: 8, align: 'right', c: '#9a96ae' });
     }
     drawToast();
   };
@@ -1965,20 +1969,20 @@ const cast3 = (v, xs, flipLast) => ['tuomas', 'antti', 'rauno'].map((c, i) => ({
 const go = (scene) => Scenes.go(scene);
 
 const EP = {
-  1: { title: 'Meeting Up', time: '14:00', music: 'day', suggest: 'antti',
-    text: 'A parking lot. A sunny Saturday. Three men with a plan: they do not have a plan.' },
-  2: { title: 'Toys for Grown-ups', time: '15:30', music: 'day', suggest: 'tuomas',
-    text: 'Tuomas unpacks the RC car and the drone. Rauno prepares to explain the physics. Antti prepares to be unimpressed.' },
+  1: { title: 'Tapaaminen', time: '14:00', music: 'day', suggest: 'antti',
+    text: 'Parkkipaikka. Aurinkoinen lauantai. Kolme miestä ja suunnitelma: suunnitelmaa ei ole.' },
+  2: { title: 'Aikuisten lelut', time: '15:30', music: 'day', suggest: 'tuomas',
+    text: 'Tuomas purkaa radio-ohjattavan auton ja dronen. Rauno valmistautuu selittämään fysiikkaa. Antti valmistautuu olemaan ihastumatta.' },
   3: { title: 'Löyly', time: '17:30', music: 'sauna', suggest: 'rauno',
-    text: 'The great equalizer. Three men, one stove, and a towel policy of limited ambition.' },
-  4: { title: 'The Kitchen', time: '19:30', music: 'kitchen', suggest: 'antti',
-    text: 'Antti steps up to the stove. Fire, steel and sausage. Everyone else steps back.' },
-  5: { title: 'Poker Night', time: '21:30', music: 'poker', suggest: 'tuomas',
-    text: 'Chips, cards and psychological warfare. No money is lost, only pride.' },
-  6: { title: 'To the Restaurant', time: '23:30', music: 'restaurant', suggest: 'rauno',
-    text: 'The evening moves to the pub. The beer flows. Standards drop. Stories grow.' },
-  7: { title: 'The Way Home', time: '02:00', music: 'night', suggest: 'antti',
-    text: 'The streets are quiet. The friends are not.' },
+    text: 'Suuri tasoittaja. Kolme miestä, yksi kiuas ja pyyhepolitiikka vaatimattomin tavoittein.' },
+  4: { title: 'Keittiö', time: '19:30', music: 'kitchen', suggest: 'antti',
+    text: 'Antti astuu liedelle. Tuli, teräs ja makkara. Muut astuvat taaksepäin.' },
+  5: { title: 'Pokeri-ilta', time: '21:30', music: 'poker', suggest: 'tuomas',
+    text: 'Pelimerkkejä, kortteja ja psykologista sodankäyntiä. Rahaa ei menetetä, vain ylpeys.' },
+  6: { title: 'Ravintolaan', time: '23:30', music: 'restaurant', suggest: 'rauno',
+    text: 'Ilta siirtyy kuppilaan. Kalja virtaa. Vaatimukset laskevat. Tarinat kasvavat.' },
+  7: { title: 'Kotimatka', time: '02:00', music: 'night', suggest: 'antti',
+    text: 'Kadut ovat hiljaa. Kaverit eivät.' },
 };
 const EP_START = {};
 function episodeCard(n) {
@@ -1991,21 +1995,21 @@ EP_START[1] = () => Cutscene({
   bg: t => BG.lot(t, 'day'), floor: BG.FLOOR.lot, music: 'day',
   cast: cast3('out', [130, 240, 350], true),
   steps: [
-    nar('A parking lot somewhere in Finland. Saturday, 14:00. Three men, three hats, zero plans.'),
-    say('tuomas', 'Gentlemen. I have brought the RC car, the drone, and an unreasonable number of batteries.'),
-    say('rauno', 'I have brought my intellect, and a charger for those batteries, which you forgot. You are welcome.'),
-    say('antti', 'I have brought my good frying pan. Please nobody ask why.'),
-    say('tuomas', 'Why?'),
-    say('antti', 'It has been waiting for this evening.'),
+    nar('Parkkipaikka jossain Suomessa. Lauantai, kello 14. Kolme miestä, kolme hattua, nolla suunnitelmaa.'),
+    say('tuomas', 'Hyvät herrat. Toin radio-ohjattavan auton, dronen ja kohtuuttoman määrän akkuja.'),
+    say('rauno', 'Minä toin älyni sekä laturin noille akuille, jonka unohdit. Ole hyvä.'),
+    say('antti', 'Minä toin hyvän paistinpannuni. Älköön kukaan kysykö miksi.'),
+    say('tuomas', 'Miksi?'),
+    say('antti', 'Se on odottanut tätä iltaa.'),
     {
-      choice: ["Let's get beer first.", "Let's drive the RC car first!", 'I love you guys. (A bit early.)'], text: 'The evening begins. What does {P} say?',
+      choice: ['Haetaan ensin kaljaa.', 'Ajetaan ensin radiksella!', 'Rakastan teitä, pojat. (Vähän aikaisin.)'], text: 'Ilta alkaa. Mitä {P} sanoo?',
       on: (i) => {
-        if (i === 0) { addMood(3); return [say('antti', 'A wise man. Beer first, always.')]; }
-        if (i === 1) { addMood(2); return [say('tuomas', 'FINALLY someone with taste!')]; }
-        addMood(2); return [say('rauno', 'That sentiment is statistically premature, but noted with warmth.'), say('antti', '...I love you too. Now, beer.')];
+        if (i === 0) { addMood(3); return [say('antti', 'Viisas mies. Kalja ensin, aina.')]; }
+        if (i === 1) { addMood(2); return [say('tuomas', 'VIHDOIN joku, jolla on makua!')]; }
+        addMood(2); return [say('rauno', 'Tunnustus on tilastollisesti ennenaikainen, mutta se on huomioitu lämmöllä.'), say('antti', '...Minäkin rakastan sinua. Nyt kuitenkin kaljaa.')];
       },
     },
-    nar('First stop: the shop. The evening needs supplies.'),
+    nar('Ensimmäinen pysäkki: kauppa. Ilta tarvitsee tarvikkeita.'),
   ],
   onEnd: () => go(ShopScene({ done: () => go(episodeCard(2)) })),
 });
@@ -2015,38 +2019,38 @@ EP_START[2] = () => Cutscene({
   bg: t => BG.yard(t, 'day'), floor: BG.FLOOR.yard, music: 'day',
   cast: cast3('out', [110, 230, 350], true),
   steps: [
-    say('tuomas', 'Behold. A 1:10 scale monster of speed. It has a name. The name is Kevin.'),
-    say('rauno', 'Kevin possesses an admirable power-to-weight ratio. The steering geometry, however, is aspirational.'),
-    say('antti', 'Can it carry a sausage?'),
-    say('tuomas', 'Do NOT put a sausage on Kevin.'),
-    nar('Obstacle course time. Drive through the checkpoints in order. Cones are not your friends. Tuomas drives best, but you can switch any time (C).'),
+    say('tuomas', 'Katsokaa. Mittakaavan 1:10 nopeuden hirviö. Sillä on nimi. Nimi on Kevin.'),
+    say('rauno', 'Kevinin teho-painosuhde on ihailtava. Ohjausgeometria on kuitenkin lähinnä toiveikas.'),
+    say('antti', 'Jaksaako se kantaa makkaraa?'),
+    say('tuomas', 'Kevinin päälle EI laiteta makkaraa.'),
+    nar('Esterata. Aja tarkistuspisteiden läpi järjestyksessä. Kartiot eivät ole ystäviäsi. Tuomas ajaa parhaiten, mutta voit vaihtaa hahmoa milloin vain (C).'),
   ],
   onEnd: () => go(RCScene({
     done: (r) => go(Cutscene({
       bg: t => BG.yard(t, 'day'), floor: BG.FLOOR.yard, music: 'day', cast: cast3('out', [110, 230, 350], true),
       steps: [
-        say('rauno', 'Elapsed time: ' + r.time.toFixed(1) + ' seconds. I award a rating of ' + r.rating + '. ' + (r.hits > 3 ? 'The cones have filed a complaint.' : 'The cones are cautiously optimistic.')),
-        say('tuomas', r.rating === 'S' || r.rating === 'A' ? 'Kevin is proud. I am proud. Everyone is proud.' : 'Kevin was not at fault. The course was.'),
-        say('antti', 'Fine. But can we eat soon?'),
-        say('tuomas', 'Not before the drone. The drone is non-negotiable.'),
-        nar('The drone comes out of its case. Fly through all five rings and land on the pad. Trees are... present.'),
+        say('rauno', 'Kulunut aika: ' + r.time.toFixed(1).replace('.', ',') + ' sekuntia. Arvosanaksi annan ' + r.rating + '. ' + (r.hits > 3 ? 'Kartiot ovat tehneet valituksen.' : 'Kartiot ovat varovaisen toiveikkaita.')),
+        say('tuomas', r.rating === 'S' || r.rating === 'A' ? 'Kevin on ylpeä. Minä olen ylpeä. Kaikki ovat ylpeitä.' : 'Kevin ei ollut syyllinen. Rata oli.'),
+        say('antti', 'Selvä. Mutta voidaanko syödä pian?'),
+        say('tuomas', 'Ei ennen dronea. Drone ei ole neuvoteltavissa.'),
+        nar('Drone tulee esiin kotelostaan. Lennä kaikkien viiden renkaan läpi ja laskeudu alustalle. Puita on... paikalla.'),
       ],
       onEnd: () => go(DroneScene({
         done: (d) => go(Cutscene({
           bg: t => BG.yard(t, 'day'), floor: BG.FLOOR.yard, music: 'day', cast: cast3('out', [110, 230, 350], true),
           steps: d.landed ? [
-            say('rauno', 'A perfect landing. I want it on record that this was not luck. It was a little bit of luck.'),
-            say('tuomas', 'I told you. Precision.'),
-            say('antti', 'Suspicious.'),
+            say('rauno', 'Täydellinen laskeutuminen. Haluan pöytäkirjaan, ettei se ollut tuuria. Se oli vähän tuuria.'),
+            say('tuomas', 'Sanoinhan. Tarkkuutta.'),
+            say('antti', 'Epäilyttävää.'),
           ] : d.tree ? [
-            say('rauno', 'We have just witnessed a classic case in which angular velocity exceeded the pilot\'s reaction time.'),
-            say('tuomas', 'The tree jumped out at me.'),
-            say('antti', 'Trees do not jump.'),
-            say('tuomas', 'This one did.'),
-            nar('The drone remains in the tree. It will be retrieved at a later date. Possibly with a ladder. Possibly with prayer.'),
+            say('rauno', 'Todistimme juuri klassisen tapauksen, jossa kulmanopeus ylitti lentäjän reaktioajan.'),
+            say('tuomas', 'Puu hyppäsi eteeni.'),
+            say('antti', 'Puut eivät hyppää.'),
+            say('tuomas', 'Tämä hyppäsi.'),
+            nar('Drone jää puuhun. Se haetaan pois myöhemmin. Ehkä tikkailla. Ehkä rukoilemalla.'),
           ] : [
-            say('rauno', 'The drone has returned to the ground by means other than landing. This is called a crash.'),
-            say('tuomas', 'It was a very dramatic landing.'),
+            say('rauno', 'Drone on palannut maahan muulla kuin laskeutumisen keinoin. Tätä kutsutaan putoamiseksi.'),
+            say('tuomas', 'Se oli hyvin dramaattinen laskeutuminen.'),
             say('antti', 'Sauna?'),
             say('tuomas', 'Sauna.'),
           ],
@@ -2063,22 +2067,22 @@ function saunaBg(t) { BG.sauna(t); }
 function saunaFg() { rect(40, 188, 280, 10, '#8a5a30'); rect(40, 188, 280, 2, '#a8723d'); rect(40, 198, 280, 24, '#63401f'); }
 let compIdx = 0;
 function complimentRound() {
-  const traits = { tuomas: 'Your toys make grown men weep with joy.', antti: 'You can make a sausage taste like a love letter.', rauno: 'You speak like a Nobel laureate who also fixes my Wi-Fi.' };
+  const traits = { tuomas: 'Leluistasi aikuiset miehet itkevät ilosta.', antti: 'Sinä osaat saada makkaran maistumaan rakkauskirjeeltä.', rauno: 'Puhut kuin Nobel-voittaja, joka korjaa myös wifini.' };
   return [
     { fn: () => { const o = others(); G.flags.target = o[compIdx++ % 2]; } },
-    nar('{P}, tell {T} something nice. Sauna rules: total honesty, mild exaggeration.'),
+    nar('{P}, sano {T:all} jotain kivaa. Saunan säännöt: täysi rehellisyys, lievä liioittelu.'),
     {
-      choice: () => NAMES.map(c => traits[c]), text: 'What does {P} say to {T}?',
+      choice: () => NAMES.map(c => traits[c]), text: 'Mitä {P} sanoo {T:all}?',
       on: (i) => {
         const trait = NAMES[i], target = G.flags.target;
         if (trait === target) {
           addMood(6); Snd.sfx('love'); G.flags.complimentsOK = (G.flags.complimentsOK || 0) + 1;
-          if (!G.flags.complimentLogged) { G.flags.complimentLogged = true; logEvent('compliment', nm(G.player) + ' told ' + nm(target) + ' exactly the right nice thing. Manly tears were blamed on the steam.', true); }
-          return [say(target, target === 'tuomas' ? '...I might cry. It is the steam.' : target === 'antti' ? 'Brother.' : 'That is objectively the nicest thing anyone has said to me. Please repeat it for the record.')];
+          if (!G.flags.complimentLogged) { G.flags.complimentLogged = true; logEvent('compliment', nm(G.player) + ' sanoi ' + nf(target, 'all') + ' juuri sen oikean kauniin asian. Miehekkäät kyyneleet kaadettiin löylyn piikkiin.', true); }
+          return [say(target, target === 'tuomas' ? '...Taidan itkeä. Se on se löyly.' : target === 'antti' ? 'Veli.' : 'Se on objektiivisesti kaunein asia, jonka kukaan on minulle sanonut. Toista se pöytäkirjaan.')];
         }
         addMood(1);
-        if (trait === G.player) return [say(trait === 'rauno' ? 'tuomas' : 'rauno', nm(G.player) + ' just complimented ' + nm(G.player) + '. Bold. Confidence noted.')];
-        return [say(target, '...That was about ' + nm(trait) + '. But thanks?')];
+        if (trait === G.player) return [say(trait === 'rauno' ? 'tuomas' : 'rauno', nm(G.player) + ' kehui juuri itseään. Rohkeaa. Itseluottamus huomattu.')];
+        return [say(target, '...Tuo oli ' + nf(trait, 'gen') + ' juttu. Mutta kiitos?')];
       },
     },
   ];
@@ -2086,19 +2090,19 @@ function complimentRound() {
 EP_START[3] = () => Cutscene({
   bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
   steps: [
-    nar('The sauna: 80 degrees. The mood: 100 percent. Towels: present, arguably.'),
-    say('antti', '{P}, you throw the löyly. It is a sacred responsibility.'),
-    say('rauno', 'Physics dictates that water on hot stones becomes steam rapidly. I shall not elaborate. I shall elaborate.'),
-    say('tuomas', 'Please do not elaborate.'),
+    nar('Sauna: 80 astetta. Tunnelma: 100 prosenttia. Pyyhkeet: paikalla, kai.'),
+    say('antti', '{P}, sinä heität löylyt. Se on pyhä vastuu.'),
+    say('rauno', 'Fysiikan mukaan vesi kuumilla kivillä muuttuu nopeasti höyryksi. En tarkenna. Tarkennan.'),
+    say('tuomas', 'Älä tarkenna.'),
   ],
   onEnd: () => go(steamGame()),
 });
 function steamGame() {
   const puffs = [];
   return TimingScene({
-    title: 'THROW THE LÖYLY', hint: 'Press A when the marker is in the green zone', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
+    title: 'HEITÄ LÖYLYÄ', hint: 'Paina A, kun merkki on vihreällä alueella', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
     bg: saunaBg, floor: 190, bust: true, cast: saunaCast(),
-    texts: { hit: 'Perfect löyly! Aaah...', low: 'Weak splash. The stones are unimpressed.', high: 'TOO MUCH! A wall of steam. Everyone wheezes.' },
+    texts: { hit: 'Täydellinen löyly! Aaah...', low: 'Heikko molaus. Kivet eivät vaikutu.', high: 'LIIKAA! Höyryseinä. Kaikki hengästyvät.' },
     expr: (c, st) => (st.hits >= 2 ? 'hot' : undefined),
     fg: saunaFg,
     onGrade: (g, i, st) => {
@@ -2112,22 +2116,22 @@ function steamGame() {
     },
     done: (grades) => {
       const hits = grades.filter(g => g === 'hit').length;
-      logEvent('steam', 'The löyly was thrown ' + grades.length + ' times. ' + hits + ' of them were perfect. The rest were interpreted as character.', hits >= 3);
+      logEvent('steam', 'Löylyä heitettiin ' + grades.length + ' kertaa. ' + hits + ' niistä oli täydellistä. Loput tulkittiin luonteenpiirteiksi.', hits >= 3);
       go(Cutscene({
         bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
         steps: [
-          say('rauno', hits >= 4 ? 'A flawless thermal performance.' : hits >= 2 ? 'Acceptable. The stones have no complaints.' : 'I have seen better steam in a kettle.'),
-          nar('Now: the ancient sauna ritual. Who can endure the heat the longest? Mash A to stay on the bench!'),
+          say('rauno', hits >= 4 ? 'Moitteeton lämpösuoritus.' : hits >= 2 ? 'Hyväksyttävä. Kivillä ei ole huomauttamista.' : 'Olen nähnyt parempaa höyryä vedenkeittimessä.'),
+          nar('Nyt: muinainen saunarituaali. Kuka kestää kuumuutta pisimpään? Hakkaa A:ta pysyäksesi lauteilla!'),
         ],
         onEnd: () => go(EnduranceScene({
           done: () => go(Cutscene({
             bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
             steps: [
-              say(G.flags.saunaWinner || 'antti', 'I won. I will not be humble about it.'),
-              nar('In the sauna, honesty comes easy. And so do compliments.'),
+              say(G.flags.saunaWinner || 'antti', 'Voitin. En aio olla nöyrä siitä.'),
+              nar('Saunassa rehellisyys tulee helposti. Samoin kehut.'),
               { fn: () => complimentRound() },
               { fn: () => complimentRound() },
-              nar('Out of the sauna. The evening air. Three men in towels, suddenly emotional.'),
+              nar('Ulos saunasta. Iltailma. Kolme miestä pyyhkeissä, yhtäkkiä herkistyneinä.'),
             ],
             onEnd: () => go(HugScene({ done: () => go(porchScene()) })),
           })),
@@ -2141,11 +2145,11 @@ function porchScene() {
     bg: t => BG.porch(t, 'eve'), floor: BG.FLOOR.porch, music: 'sauna',
     cast: [{ c: 'tuomas', x: 130, v: 'sauna' }, { c: 'antti', x: 240, v: 'sauna' }, { c: 'rauno', x: 350, v: 'sauna', flip: true }],
     steps: [
-      { fn: () => { drinkAll(1); Snd.sfx('clink'); logEvent('porch', 'Three men, three beers, one lake. Nobody spoke. Everything was said.', true); } },
-      nar('Cold beer on the porch. The lake is calm. Time stands still for eleven seconds.'),
-      say('antti', 'Best sauna ever.'),
-      say('rauno', 'Subjective, but I concur.'),
-      say('tuomas', 'Cheers, boys.'),
+      { fn: () => { drinkAll(1); Snd.sfx('clink'); logEvent('porch', 'Kolme miestä, kolme kaljaa, yksi järvi. Kukaan ei puhunut. Kaikki tuli sanottua.', true); } },
+      nar('Kylmä kalja kuistilla. Järvi on tyyni. Aika pysähtyy yhdentoista sekunnin ajaksi.'),
+      say('antti', 'Paras sauna ikinä.'),
+      say('rauno', 'Subjektiivista, mutta olen samaa mieltä.'),
+      say('tuomas', 'Kippis, pojat.'),
     ],
     onEnd: () => go(episodeCard(4)),
   });
@@ -2156,28 +2160,28 @@ function kitchenCast() { return [{ c: 'tuomas', x: 150, v: 'in' }, { c: 'antti',
 EP_START[4] = () => Cutscene({
   bg: t => BG.kitchen(t), floor: BG.FLOOR.kitchen, music: 'kitchen', cast: kitchenCast(),
   steps: [
-    say('antti', 'Stand back. I am cooking.'),
-    say('rauno', 'I have set a timer. It will not help, but it is there for moral support.'),
-    say('tuomas', 'Can I help?'),
-    say('antti', 'You can hold the beer.'),
-    ...(G.flags.noSausage ? [say('rauno', 'We did not buy sausages.'), say('antti', '...Emergency noodles it is.')] : []),
-    nar(G.shop.onion ? 'First the onions: mash A to chop. Then fry: take each piece off when the bar is green. Antti cooks best.' : 'Fry: take each piece off when the bar is in the green zone. Antti cooks best.'),
+    say('antti', 'Takaisin. Minä keitän.'),
+    say('rauno', 'Olen asettanut ajastimen. Se ei auta, mutta se on tukena moraalisesti.'),
+    say('tuomas', 'Voinko auttaa?'),
+    say('antti', 'Voit pitää kaljaa.'),
+    ...(G.flags.noSausage ? [say('rauno', 'Emme ostaneet makkaraa.'), say('antti', '...Hätänuudelit sitten.')] : []),
+    nar(G.shop.onion ? 'Ensin sipulit: hakkaa A:ta pilkkoaksesi. Sitten paisto: ota kukin pala pois, kun palkki on vihreä. Antti kokkaa parhaiten.' : 'Paisto: ota kukin pala pois, kun palkki on vihreällä alueella. Antti kokkaa parhaiten.'),
   ],
   onEnd: () => go(CookScene({
     done: (r) => go(Cutscene({
       bg: t => BG.kitchen(t), floor: BG.FLOOR.kitchen, music: 'kitchen', cast: kitchenCast(),
       steps: [
-        ...(r.pct > 0.8 ? [say('rauno', 'I have rarely seen a sausage this golden. This is, scientifically, art.'), say('tuomas', 'I would like to marry this dinner.')]
-          : r.burnt >= 2 ? [say('tuomas', 'This is... crunchy.'), say('rauno', 'The carbon content is impressive.'), say('antti', 'It is rustic.')]
-          : [say('antti', 'Edible. Possibly good. Eat.'), say('rauno', 'Acceptable nutrition.')]),
+        ...(r.pct > 0.8 ? [say('rauno', 'Harvoin olen nähnyt näin kullanruskeaa makkaraa. Tämä on tieteellisesti taidetta.'), say('tuomas', 'Haluaisin naimisiin tämän illallisen kanssa.')]
+          : r.burnt >= 2 ? [say('tuomas', 'Tämä on... rapeaa.'), say('rauno', 'Hiilipitoisuus on vaikuttava.'), say('antti', 'Se on rustiikkista.')]
+          : [say('antti', 'Syötävää. Mahdollisesti hyvää. Syökää.'), say('rauno', 'Hyväksyttävää ravintoa.')]),
         { fn: () => {
           if (!G.flags.herring) return [];
           const good = Math.random() < 0.5;
           addMood(good ? 4 : -4);
-          return [say('antti', 'I also added the herring.'), say('rauno', good ? '...It works. I do not understand why, but it works.' : 'I have questions. They will remain unanswered.')];
+          return [say('antti', 'Lisäsin myös silakan.'), say('rauno', good ? '...Se toimii. En ymmärrä miksi, mutta se toimii.' : 'Minulla on kysymyksiä. Ne jäävät vastaamatta.')];
         } },
         { fn: () => { drinkAll(1); Snd.sfx('clink'); } },
-        nar('Dinner is eaten in near silence, the highest compliment. Another beer is opened.'),
+        nar('Illallinen syödään lähes hiljaisuudessa, mikä on korkein kehu. Avataan vielä yksi kalja.'),
       ],
       onEnd: () => go(episodeCard(5)),
     })),
@@ -2189,18 +2193,18 @@ function livingCast() { return [{ c: 'tuomas', x: 140, v: 'in' }, { c: 'antti', 
 EP_START[5] = () => Cutscene({
   bg: t => BG.living(t), floor: BG.FLOOR.living, music: 'poker', cast: livingCast(),
   steps: [
-    say('tuomas', 'Texas hold\'em, light edition. The winner gets eternal bragging rights.'),
-    say('antti', 'I am going to take all of your chips.'),
-    say('rauno', 'I shall call everything. This is my strategy.'),
-    nar('Read your friends: Tuomas bluffs a lot. Antti only bets with strong hands. Rauno calls everything and rarely raises. Six hands. Switch character between hands with C.'),
+    say('tuomas', 'Texas hold\'em, kevytversio. Voittaja saa ikuiset leuhkimisoikeudet.'),
+    say('antti', 'Aion viedä kaikki teidän pelimerkkinne.'),
+    say('rauno', 'Maksan kaiken. Se on strategiani.'),
+    nar('Lue kavereitasi: Tuomas bluffaa paljon. Antti panostaa vain vahvoilla käsillä. Rauno maksaa kaiken ja korottaa harvoin. Kuusi kättä. Vaihda hahmoa käsien välillä C:llä.'),
   ],
   onEnd: () => go(PokerScene({ hands: 6, venue: 'home', music: 'poker', done: (w) => go(Cutscene({
     bg: t => BG.living(t), floor: BG.FLOOR.living, music: 'poker', cast: livingCast(),
     steps: [
-      say(w, w === 'antti' ? 'I told you. All your chips are mine.' : w === 'tuomas' ? 'Skill. Pure skill. Also a little bluffing.' : 'I... won? By calling everything? Unbelievable.'),
-      say(others(w)[0], 'This game is rigged.'),
-      say(others(w)[1], 'It is cards. It is always rigged.'),
-      nar('Time to leave the house. The restaurant is calling.'),
+      say(w, w === 'antti' ? 'Sanoin. Kaikki pelimerkkinne ovat minun.' : w === 'tuomas' ? 'Taitoa. Puhdasta taitoa. Ja vähän bluffausta.' : 'Minä... voitin? Maksamalla kaiken? Uskomatonta.'),
+      say(others(w)[0], 'Tämä peli on viritetty.'),
+      say(others(w)[1], 'Kyse on korteista. Ne ovat aina viritettyjä.'),
+      nar('Aika lähteä talosta. Ravintola kutsuu.'),
     ],
     onEnd: () => go(episodeCard(6)),
   })) })),
@@ -2210,31 +2214,31 @@ EP_START[5] = () => Cutscene({
 EP_START[6] = () => {
   const events = [
     () => [
-      nar('A seagull swoops down and steals the last sausage from Antti\'s hand!'),
-      say('antti', 'NOT THE SAUSAGE!'),
-      { choice: ['Chase the seagull!', 'Let it go.', 'Calculate the trajectory (Rauno style).'], text: 'What does {P} do?',
+      nar('Lokki syöksyy alas ja varastaa viimeisen makkaran Antin kädestä!'),
+      say('antti', 'EI MAKKARAA!'),
+      { choice: ['Jahtaa lokkia!', 'Anna olla.', 'Laske lentorata (Raunon tyyliin).'], text: 'Mitä {P} tekee?',
         on: (i) => {
-          if (i === 0) { addMood(3); logEvent('seagull', 'A seagull stole a sausage. A grown man ran after it in the dark. The seagull won.', true); return [nar('{P} sprints after the seagull. The seagull is faster. The seagull is always faster. The effort is appreciated.')]; }
-          if (i === 1) { addMood(1); return [say('antti', '...It was a good sausage.')]; }
-          addMood(2); return [say('rauno', 'Trajectory suggests it landed on that roof. Probability of recovery: zero.'), say('tuomas', 'Thank you, Professor.')];
+          if (i === 0) { addMood(3); logEvent('seagull', 'Lokki varasti makkaran. Aikuinen mies juoksi sen perässä pimeässä. Lokki voitti.', true); return [nar('{P} syöksyy lokin perään. Lokki on nopeampi. Lokki on aina nopeampi. Yritys arvostetaan.')]; }
+          if (i === 1) { addMood(1); return [say('antti', '...Se oli hyvä makkara.')]; }
+          addMood(2); return [say('rauno', 'Lentoradan mukaan se laskeutui tuolle katolle. Palautuksen todennäköisyys: nolla.'), say('tuomas', 'Kiitos, professori.')];
         } },
     ],
     () => [
-      nar('A stray cat blocks the sidewalk and silently judges everyone.'),
-      { choice: ['Pet the cat.', 'Bow respectfully.', 'Ignore the cat. Walk past with dignity.'], text: 'What does {P} do?',
+      nar('Kulkukissa tukkii jalkakäytävän ja tuomitsee kaikki hiljaa.'),
+      { choice: ['Silitä kissaa.', 'Kumarra kunnioittavasti.', 'Älä välitä kissasta. Kävele ohi arvokkaasti.'], text: 'Mitä {P} tekee?',
         on: (i) => {
-          if (i === 0) { addMood(4); logEvent('cat', 'A stray cat was petted on the way to the pub. It accepted the tribute.', true); return [nar('The cat purrs. Three grown men melt.')]; }
-          if (i === 1) { addMood(3); return [say('rauno', 'One should always respect an apex predator.')]; }
-          addMood(0); return [nar('The cat watches. The cat remembers.')];
+          if (i === 0) { addMood(4); logEvent('cat', 'Kulkukissaa silitettiin matkalla kuppilaan. Se otti kunnianosoituksen vastaan.', true); return [nar('Kissa kehrää. Kolme aikuista miestä sulaa.')]; }
+          if (i === 1) { addMood(3); return [say('rauno', 'Huippupetoa tulee aina kunnioittaa.')]; }
+          addMood(0); return [nar('Kissa katsoo. Kissa muistaa.')];
         } },
     ],
     () => [
-      nar('A kebab stand glows like an oasis in the night.'),
-      { choice: ['Buy kebab for everybody.', 'Resist. We have a pub to reach.', 'Tuomas orders for everybody (he always does).'], text: 'What does {P} do?',
+      nar('Kebabkioski hohtaa kuin keidas yössä.'),
+      { choice: ['Osta kebabit kaikille.', 'Vastusta. Meillä on kuppila saavutettavana.', 'Tuomas tilaa kaikille (kuten aina).'], text: 'Mitä {P} tekee?',
         on: (i) => {
-          if (i === 0) { addMood(4); addHunger(-12); logEvent('kebab', 'Kebab was acquired on the way to the pub. It was not the last kebab.', true); return [say('antti', 'Brother. You complete me.')]; }
-          if (i === 1) { addMood(1); return [say('rauno', 'A disciplined choice. I admire it and resent it.')]; }
-          addMood(3); addHunger(-8); return [say('tuomas', 'Three kebabs. Extra sauce. Do not argue.')];
+          if (i === 0) { addMood(4); addHunger(-12); logEvent('kebab', 'Kebabia hankittiin matkalla kuppilaan. Se ei ollut viimeinen kebab.', true); return [say('antti', 'Veli. Sinä täydennät minut.')]; }
+          if (i === 1) { addMood(1); return [say('rauno', 'Kurinalainen valinta. Ihailen sitä ja kaunaan sitä.')]; }
+          addMood(3); addHunger(-8); return [say('tuomas', 'Kolme kebabia. Extrakastiketta. Älkää väitelkö.')];
         } },
     ],
   ];
@@ -2243,17 +2247,17 @@ EP_START[6] = () => {
     bg: t => BG.street(t, 'night'), floor: BG.FLOOR.street, music: 'restaurant',
     cast: [{ c: 'tuomas', x: 150, v: 'out', walk: true }, { c: 'antti', x: 240, v: 'out', walk: true }, { c: 'rauno', x: 330, v: 'out', walk: true, flip: false }],
     steps: [
-      nar('Midnight approaches. The pub glows in the distance like a greasy lighthouse.'),
-      say('rauno', 'According to my calculations, we arrive in four minutes, assuming no incidents.'),
+      nar('Keskiyö lähestyy. Kuppila hohtaa kaukana kuin rasvainen majakka.'),
+      say('rauno', 'Laskelmieni mukaan saavumme neljässä minuutissa, mikäli välikohtauksia ei ilmene.'),
       ...ev,
-      nar('The pub. The neon sign flickers. A waitress nods at them like old friends.'),
+      nar('Kuppila. Neonkyltti vilkkuu. Tarjoilija nyökkää heille kuin vanhoille tutuille.'),
     ],
     onEnd: () => go(Cutscene({
       bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant, music: 'restaurant', cast: [{ c: 'tuomas', x: 150, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 330, v: 'out' }],
       steps: [
-        say('antti', 'Three beers, please. The big ones.'),
-        say('tuomas', 'To the best day of the year!'),
-        nar('Time to clink glasses. Press A when the marker is in the green zone. Three rounds.'),
+        say('antti', 'Kolme kaljaa, kiitos. Isoja.'),
+        say('tuomas', 'Vuoden parhaalle päivälle!'),
+        nar('Aika kilistää. Paina A, kun merkki on vihreällä alueella. Kolme kierrosta.'),
       ],
       onEnd: () => go(cheersGame()),
     })),
@@ -2262,10 +2266,10 @@ EP_START[6] = () => {
 function cheersGame() {
   const sparks = [];
   return TimingScene({
-    title: 'CHEERS!', hint: 'Press A when the glasses meet in the green zone', rounds: 3, zoneW: 0.22, speed: 1.35, music: 'restaurant',
+    title: 'KIPPIS!', hint: 'Paina A, kun lasit kohtaavat vihreällä alueella', rounds: 3, zoneW: 0.22, speed: 1.35, music: 'restaurant',
     bg: t => BG.restaurant(t), floor: 196,
     cast: [{ c: 'tuomas', x: 120, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 360, v: 'out' }],
-    texts: { hit: 'CLINK! Perfect cheers.', low: 'Too early. Beer on the table.', high: 'Too late. Glass meets elbow.' },
+    texts: { hit: 'KILING! Täydellinen kippis.', low: 'Liian aikaisin. Kaljaa pöydälle.', high: 'Liian myöhään. Lasi kohtaa kyynärpään.' },
     onGrade: (g) => {
       drinkAll(1);
       if (g === 'hit') { Snd.sfx('clink'); addMood(3); for (let i = 0; i < 12; i++) sparks.push({ x: 240 + rnd(-10, 10), y: 100, vx: rnd(-60, 60), vy: rnd(-70, -10), life: 0.8 }); }
@@ -2280,21 +2284,21 @@ function cheersGame() {
     },
     done: (grades) => {
       const hits = grades.filter(g => g === 'hit').length;
-      logEvent('cheers', 'Three rounds of cheers were attempted. ' + hits + ' of them resulted in clinking. The rest resulted in napkins.', hits >= 2);
+      logEvent('cheers', 'Kippistä yritettiin kolme kertaa. ' + hits + ' niistä päättyi kilinään. Loput päättyivät lautasliinoihin.', hits >= 2);
       go(Cutscene({
         bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant, music: 'restaurant', cast: [{ c: 'tuomas', x: 150, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 330, v: 'out' }],
         steps: [
-          say('tuomas', 'Cards?'),
-          say('antti', 'Cards.'),
-          say('rauno', 'I shall call anything.'),
-          nar('A second poker round at the pub. Four hands. The beer is starting to show.'),
+          say('tuomas', 'Kortteja?'),
+          say('antti', 'Kortteja.'),
+          say('rauno', 'Maksan mitä tahansa.'),
+          nar('Toinen pokerikierros kuppilassa. Neljä kättä. Kalja alkaa näkyä.'),
         ],
         onEnd: () => go(PokerScene({ hands: 4, venue: 'restaurant', music: 'restaurant', done: (w) => go(Cutscene({
           bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant, music: 'restaurant', cast: [{ c: 'tuomas', x: 150, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 330, v: 'out' }],
           steps: [
-            say(w, 'The pub champion has spoken. Another round on the loser.'),
-            say(others(w)[0], 'I demand a rematch. At some point.'),
-            nar('Last orders. The night is long, the walk home longer.'),
+            say(w, 'Kuppilan mestari on puhunut. Seuraava kierros häviäjän piikkiin.'),
+            say(others(w)[0], 'Vaadin uusintaottelua. Joskus.'),
+            nar('Viimeiset tilaukset. Yö on pitkä, kotimatka pidempi.'),
           ],
           onEnd: () => go(episodeCard(7)),
         })) })),
@@ -2308,28 +2312,28 @@ EP_START[7] = () => Cutscene({
   bg: t => BG.street(t, 'night'), floor: BG.FLOOR.street, music: 'night',
   cast: [{ c: 'tuomas', x: 150, v: 'out', walk: true }, { c: 'antti', x: 240, v: 'out', walk: true }, { c: 'rauno', x: 330, v: 'out', walk: true }],
   steps: [
-    nar('Two in the morning. The streets are empty. The friends are not.'),
-    say('antti', 'I love this city.'),
-    say('rauno', 'You are standing in a puddle.'),
-    say('antti', 'I love this puddle.'),
+    nar('Yö kaksi. Kadut ovat tyhjiä. Kaverit eivät.'),
+    say('antti', 'Rakastan tätä kaupunkia.'),
+    say('rauno', 'Seisot lätäkössä.'),
+    say('antti', 'Rakastan tätä lätäkköä.'),
     { fn: () => {
       const wob = NAMES.some(c => G.bac[c] > 0.55);
-      if (wob) { logEvent('lamp', 'Tuomas attempted to hug a lamp post. The lamp post was a good listener.', true); return [say('tuomas', 'This lamp post understands me.'), say('rauno', 'Tuomas. That is a lamp post.'), say('tuomas', 'Yes. A great one.')]; }
-      return [say('tuomas', 'Best day. No notes.')];
+      if (wob) { logEvent('lamp', 'Tuomas yritti halata lyhtypylvästä. Lyhtypylväs oli hyvä kuuntelija.', true); return [say('tuomas', 'Tämä lyhtypylväs ymmärtää minua.'), say('rauno', 'Tuomas. Tuo on lyhtypylväs.'), say('tuomas', 'Niin on. Loistava sellainen.')]; }
+      return [say('tuomas', 'Paras päivä. Ei huomautettavaa.')];
     } },
-    say('rauno', 'I have ordered a taxi. It will arrive in five minutes, which in Finnish means twenty.'),
+    say('rauno', 'Tilasin taksin. Se saapuu viidessä minuutissa, mikä suomeksi tarkoittaa kahtakymmentä.'),
   ],
   onEnd: () => go(Cutscene({
     bg: t => BG.car(t), floor: 196, music: 'night', bust: true, noMarker: true,
     cast: [{ c: 'antti', x: 240, v: 'out', y: 150 }, { c: 'rauno', x: 140, v: 'out', y: 196 }, { c: 'tuomas', x: 340, v: 'out', y: 196 }],
     steps: [
-      nar('The taxi arrives. Antti takes the back seat, as nature intended.'),
-      say('tuomas', 'That was the best day ever.'),
-      say('rauno', 'A sentiment I can support empirically.'),
-      say('antti', 'Same time next month?'),
-      say('tuomas', 'Obviously.'),
-      { fn: () => { logEvent('ride', 'Three friends in a taxi at 3 a.m., already planning the next one.', true); } },
-      nar('Three friends. One evening. Zero regrets (ask again tomorrow).'),
+      nar('Taksi saapuu. Antti ottaa takapenkin, kuten luonto on tarkoittanut.'),
+      say('tuomas', 'Tämä oli paras päivä ikinä.'),
+      say('rauno', 'Tunnelma, jota voin tukea empiirisesti.'),
+      say('antti', 'Samaan aikaan ensi kuussa?'),
+      say('tuomas', 'Ilman muuta.'),
+      { fn: () => { logEvent('ride', 'Kolme kaveria taksissa kolmelta yöllä, jo suunnittelemassa seuraavaa.', true); } },
+      nar('Kolme kaveria. Yksi ilta. Nolla katumusta (kysy uudestaan huomenna).'),
     ],
     onEnd: () => go(morningCard()),
   })),
@@ -2337,8 +2341,8 @@ EP_START[7] = () => Cutscene({
 
 function morningCard() {
   const avg = NAMES.reduce((a, c) => a + G.bac[c], 0) / 3;
-  const txt = avg < 0.3 ? 'Surprisingly fresh. Someone forgot to drink. (Or drank wisely.)' : avg < 0.6 ? 'A mild headache and a very clear sense of satisfaction.' : 'A legendary hangover. Worth every minute.';
-  return Card({ ep: 8, title: 'Next Morning', time: '10:30', text: txt, music: 'night', next: () => CreditsScene(), note: 'Roll credits...' });
+  const txt = avg < 0.3 ? 'Yllättävän virkeä olo. Joku unohti juoda. (Tai joi viisaasti.)' : avg < 0.6 ? 'Lievä päänsärky ja erittäin selkeä tyytyväisyyden tunne.' : 'Legendaarinen krapula. Jokaisen minuutin arvoinen.';
+  return Card({ ep: 8, title: 'Seuraava aamu', time: '10:30', text: txt, music: 'night', next: () => CreditsScene(), note: 'Lopputekstit...' });
 }
 
 window.__scenes = { title: TitleScene, card: episodeCard, ep: n => EP_START[n](), shop: () => ShopScene({ done: () => go(episodeCard(2)) }), credits: () => CreditsScene(), morning: morningCard };
@@ -2347,22 +2351,22 @@ window.__scenes = { title: TitleScene, card: episodeCard, ep: n => EP_START[n]()
 // End credits: polaroid "photos" hop between left and right while text scrolls on the opposite side.
 
 const CREDIT_HEAD = {
-  shop: 'SUPPLY CHAIN', rc: 'MOTORSPORT', drone_tree: 'AVIATION', drone_land: 'AVIATION', drone_crash: 'AVIATION',
-  steam: 'THERMAL ARTS', endurance: 'ENDURANCE', compliment: 'EMOTIONAL SUPPORT', hug: 'EMOTIONAL SUPPORT', hug_fail: 'EMOTIONAL SUPPORT',
-  porch: 'LAKE RELATIONS', cook: 'CULINARY ARTS', golden: 'CULINARY ARTS', poker_home: 'GAMBLING (FOR HONOR)', poker_restaurant: 'GAMBLING (FOR HONOR)', poker: 'GAMBLING (FOR HONOR)',
-  seagull: 'WILDLIFE', cat: 'WILDLIFE', kebab: 'LOGISTICS', cheers: 'HYDRATION', lamp: 'URBAN PLANNING', ride: 'TRANSPORT',
+  shop: 'HUOLTOVARMUUS', rc: 'MOOTTORIURHEILU', drone_tree: 'ILMAILU', drone_land: 'ILMAILU', drone_crash: 'ILMAILU',
+  steam: 'LÖYLYTAITEET', endurance: 'KESTÄVYYS', compliment: 'HENKINEN TUKI', hug: 'HENKINEN TUKI', hug_fail: 'HENKINEN TUKI',
+  porch: 'JÄRVISUHTEET', cook: 'KULINARISMI', golden: 'KULINARISMI', poker_home: 'HAZARDI (KUNNIAN VUOKSI)', poker_restaurant: 'HAZARDI (KUNNIAN VUOKSI)', poker: 'HAZARDI (KUNNIAN VUOKSI)',
+  seagull: 'ELÄINKUNTA', cat: 'ELÄINKUNTA', kebab: 'LOGISTIIKKA', cheers: 'NESTETASAPAINO', lamp: 'KAUPUNKISUUNNITTELU', ride: 'LIIKENNE',
 };
 const CAPTION = {
-  shop: 'Shopping spree', rc: 'Kevin at full speed', drone_tree: 'Tree 1, Drone 0', drone_land: 'Perfect landing', drone_crash: 'Hard landing',
-  steam: 'Perfect löyly', endurance: 'Last man standing', compliment: 'Manly tears', hug: 'The hug', hug_fail: 'Manly pat',
-  porch: 'Porch beers', cook: 'Dinner is served', golden: 'Golden perfection', poker_home: 'Home poker champion', poker_restaurant: 'Pub poker champion', poker: 'Big pot',
-  seagull: 'The one that got away', cat: 'Cat approved', kebab: 'Kebab break', cheers: 'Cheers!', lamp: 'New friend', ride: 'Ride home',
+  shop: 'Ostosreissu', rc: 'Kevin täysillä', drone_tree: 'Puu 1, drone 0', drone_land: 'Täydellinen lasku', drone_crash: 'Kova lasku',
+  steam: 'Täydellinen löyly', endurance: 'Viimeinen mies pystyssä', compliment: 'Miehekkäät kyyneleet', hug: 'Se hali', hug_fail: 'Miehekäs taputus',
+  porch: 'Kuistikaljat', cook: 'Ruoka on valmista', golden: 'Kullanruskea täydellisyys', poker_home: 'Kotipokerin mestari', poker_restaurant: 'Kuppilapokerin mestari', poker: 'Iso potti',
+  seagull: 'Se joka pääsi karkuun', cat: 'Kissa hyväksyi', kebab: 'Kebabtauko', cheers: 'Kippis!', lamp: 'Uusi ystävä', ride: 'Kotimatka',
 };
 const CREDIT_EXTRA = {
-  rc: ['Kevin the RC car: as himself'], drone_tree: ['The tree: as itself', 'Drone retrieval: pending'], drone_crash: ['Gravity: as itself'],
-  steam: ['Steam consultant: Rauno'], endurance: ['Cooling off: nobody'], cook: ['Kitchen safety officer: none'], golden: ['Sausages: as themselves'],
-  porch: ['Lake: as itself'], poker_home: ['Poker faces: sourced locally'], poker_restaurant: ['Chips: emotionally damaged'],
-  ride: ['Taxi: eventually'], hug: ['Towels: reluctantly'], cheers: ['Beer: plentiful'], seagull: ['Seagull: as the winner'],
+  rc: ['Radio-ohjattava Kevin: itsenään'], drone_tree: ['Puu: itsenään', 'Dronen noutaminen: kesken'], drone_crash: ['Painovoima: itsenään'],
+  steam: ['Löylykonsultti: Rauno'], endurance: ['Viilentyminen: ei kukaan'], cook: ['Keittiön turvallisuusvastaava: ei ketään'], golden: ['Makkarat: itsenään'],
+  porch: ['Järvi: itsenään'], poker_home: ['Pokerinaamat: paikallista tuotantoa'], poker_restaurant: ['Pelimerkit: henkisesti rikki'],
+  ride: ['Taksi: lopulta'], hug: ['Pyyhkeet: vastahakoisesti'], cheers: ['Kalja: runsaasti'], seagull: ['Lokki: voittajana'],
 };
 
 function drawPolaroid(x, y, rot, snap) {
@@ -2399,7 +2403,7 @@ function CreditsScene() {
   let slides = [], i = 0, t = 0, prev = null, prevT = 0, ended = false;
   function build() {
     slides = [];
-    slides.push({ head: 'MIESTEN ILLANVIETTO', lines: ['A production of three friends', '', 'STARRING', 'Rauno as The Professor', 'Tuomas as The Pilot (allegedly)', 'Antti as The Chef', '', 'Filmed on location in Finland'], snap: { draw: drawPoster, caption: 'the guys' } });
+    slides.push({ head: 'MIESTEN ILLANVIETTO', lines: ['Kolmen kaverin tuotanto', '', 'PÄÄROOLEISSA', 'Rauno Professorina', 'Tuomas Lentäjänä (väitetysti)', 'Antti Kokkina', '', 'Kuvattu Suomessa'], snap: { draw: drawPoster, caption: 'pojat' } });
     const byId = {};
     G.snaps.forEach(s => { byId[s.id] = s; });
     let ids = Object.keys(byId);
@@ -2410,20 +2414,20 @@ function CreditsScene() {
       const text = log ? log.credit : s.caption;
       const lines = wrap(text, 190, 9);
       (CREDIT_EXTRA[id] || []).forEach(x => { lines.push(''); lines.push(x); });
-      slides.push({ head: CREDIT_HEAD[id] || 'HIGHLIGHTS', lines, snap: { canvas: s.canvas, caption: CAPTION[id] || (s.caption.length > 30 ? s.caption.slice(0, 28) + '..' : s.caption) } });
+      slides.push({ head: CREDIT_HEAD[id] || 'KOHOKOHDAT', lines, snap: { canvas: s.canvas, caption: CAPTION[id] || (s.caption.length > 30 ? s.caption.slice(0, 28) + '..' : s.caption) } });
     });
-    const label = G.mood >= 85 ? 'LEGENDARY EVENING' : G.mood >= 65 ? 'GREAT EVENING' : G.mood >= 45 ? 'SOLID EVENING' : 'AWKWARD BUT MEMORABLE EVENING';
-    const stat = [label, '', 'Beers'].concat(NAMES.map(c => nm(c) + ': ' + G.beers[c]));
+    const label = G.mood >= 85 ? 'LEGENDAARINEN ILTA' : G.mood >= 65 ? 'LOISTAVA ILTA' : G.mood >= 45 ? 'VANKKA ILTA' : 'KIUSALLINEN MUTTA MUISTETTAVA ILTA';
+    const stat = [label, '', 'Kaljat'].concat(NAMES.map(c => nm(c) + ': ' + G.beers[c]));
     stat.push('');
-    if (G.flags.pokerWinner_home) stat.push('Home poker champion: ' + nm(G.flags.pokerWinner_home));
-    if (G.flags.pokerWinner_restaurant) stat.push('Pub poker champion: ' + nm(G.flags.pokerWinner_restaurant));
-    if (G.flags.saunaWinner) stat.push('Sauna endurance: ' + nm(G.flags.saunaWinner));
-    stat.push('Burnt dinners: ' + (G.flags.burnt || 0));
-    stat.push('Drone status: ' + (G.flags.droneTree ? 'in a tree' : G.flags.droneCrash ? 'on the ground' : 'airworthy'));
+    if (G.flags.pokerWinner_home) stat.push('Kotipokerin mestari: ' + nm(G.flags.pokerWinner_home));
+    if (G.flags.pokerWinner_restaurant) stat.push('Kuppilapokerin mestari: ' + nm(G.flags.pokerWinner_restaurant));
+    if (G.flags.saunaWinner) stat.push('Saunan kestävyys: ' + nm(G.flags.saunaWinner));
+    stat.push('Palaneet ruoat: ' + (G.flags.burnt || 0));
+    stat.push('Dronen tila: ' + (G.flags.droneTree ? 'puussa' : G.flags.droneCrash ? 'maassa' : 'lentokunnossa'));
     const out = [];
     stat.forEach(l => wrap(l, 190, 9).forEach(x => out.push(x)));
-    slides.push({ head: 'THE NUMBERS', lines: out, snap: { draw: drawSelfie, caption: 'the ride home' } });
-    slides.push({ head: 'THE END', lines: ['', 'Thanks for the evening.', 'Same time next month?', '', 'Press A to play again'], snap: { draw: drawSelfie, caption: 'see you next time' }, last: true });
+    slides.push({ head: 'LUVUT', lines: out, snap: { draw: drawSelfie, caption: 'kotimatka' } });
+    slides.push({ head: 'LOPPU', lines: ['', 'Kiitos illasta.', 'Samaan aikaan ensi kuussa?', '', 'Paina A pelataksesi uudestaan'], snap: { draw: drawSelfie, caption: 'nähdään ensi kerralla' }, last: true });
     slides.forEach(s => { s.dur = s.last ? 9999 : Math.max(7, (H + s.lines.length * 13) / 34); });
   }
   return {
@@ -2466,7 +2470,7 @@ function CreditsScene() {
       T(s.head, tx, y0, { size: 13, align: 'center', c: '#ffd166' });
       s.lines.forEach((l, k) => T(l, tx, y0 + 24 + k * 13, { size: 9, align: 'center', c: '#f2e6c9' }));
       ctx.restore();
-      if (s.last && Math.floor(Scenes.time * 2) % 2 === 0) T('A: play again', W / 2, H - 28, { size: 9, align: 'center', c: '#fff' });
+      if (s.last && Math.floor(Scenes.time * 2) % 2 === 0) T('A: pelaa uudestaan', W / 2, H - 28, { size: 9, align: 'center', c: '#fff' });
       drawToast();
     },
   };

@@ -136,7 +136,7 @@ const BG = {
     for (let x = 0; x < W; x += 30) rect(x, 0, 2, 190, '#5c3836');
     rect(0, 120, W, 6, '#7a4a2a');
     const col = Math.sin(t * 3) > 0 ? '#ff4a6b' : '#ff8aa0';
-    rect(190, 24, 100, 34, '#1a0f14'); T('P U B', 240, 32, { size: 16, c: col, align: 'center' });
+    rect(190, 24, 100, 34, '#1a0f14'); T('B A A R I', 240, 32, { size: 16, c: col, align: 'center' });
     for (let i = 0; i < 6; i++) { rect(30 + i * 70, 78, 8, 20, ['#d9a05a', '#7ad0a0', '#e07a7a'][i % 3]); }
     rect(0, 190, W, 80, '#3a2418'); rect(0, 190, W, 3, '#5a3a28');
     for (let x = 0; x < W; x += 48) rect(x, 190, 1, 80, '#2e1c12');

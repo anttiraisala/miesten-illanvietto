@@ -25,7 +25,7 @@ const Snd = (() => {
     muted = !muted;
     try { localStorage.setItem('mi_muted', muted ? '1' : '0'); } catch (e) { /* ignore */ }
     if (master) master.gain.value = muted ? 0 : 0.6;
-    Toast.show(muted ? 'Sound off' : 'Sound on');
+    Toast.show(muted ? 'Ääni pois' : 'Ääni päällä');
   }
   const NOTE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
   function freq(n) {

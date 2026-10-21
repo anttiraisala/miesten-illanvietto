@@ -1,7 +1,7 @@
 // Lightweight poker: 3 players, 2 hole cards, flop + (turn,river) with two betting rounds, best-of-7 showdown.
 // AI personalities: tuomas = loose aggressive, antti = tight aggressive, rauno = loose passive.
 
-const HAND_NAMES = ['High card', 'Pair', 'Two pair', 'Three of a kind', 'Straight', 'Flush', 'Full house', 'Four of a kind', 'Straight flush'];
+const HAND_NAMES = ['Hai kortti', 'Pari', 'Kaksi paria', 'Kolmoset', 'Suora', 'Väri', 'Täyskäsi', 'Neloset', 'Värisuora'];
 const RANK_TXT = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
 const SUIT_BITS = [
   ['..X..', '.XXX.', 'XXXXX', 'XXXXX', '..X..'],   // spade
@@ -93,9 +93,9 @@ function aiDecide(who, s, toCall, canRaise) {
   return a;
 }
 const QUIPS = {
-  tuomas: { raise: ['Raise! Feel the heat.', 'Bluff? Me? Never.', 'More chips, more fun!'], call: ['Call.', 'Sure, why not.'], fold: ['Fine, fine.', 'I fold. Tactically.'] },
-  antti: { raise: ['Raise. Do not doubt me.', 'I have it.', 'Raise.'], call: ['Call.', 'Hmm. Call.'], fold: ['Fold.', 'Not this time.'] },
-  rauno: { raise: ['A modest raise. Statistically justified.'], call: ['Call. Out of curiosity.', 'I shall call, for science.', 'Call. It feels right.'], fold: ['I shall observe.', 'Fold. Suboptimal.'] },
+  tuomas: { raise: ['Korotus! Tuntuuko kuumuus?', 'Bluffi? Minäkö? En koskaan.', 'Lisää merkkejä, lisää hauskaa!'], call: ['Maksan.', 'Miksi ei.'], fold: ['No jopas.', 'Luovutan. Taktisesti.'] },
+  antti: { raise: ['Korotan. Älä epäile.', 'Minulla on se.', 'Korotan.'], call: ['Maksan.', 'Hmm. Maksan.'], fold: ['Luovutan.', 'Ei tällä kertaa.'] },
+  rauno: { raise: ['Vaatimaton korotus. Tilastollisesti perusteltu.'], call: ['Maksan. Uteliaisuudesta.', 'Maksan tieteen nimissä.', 'Maksan. Se tuntuu oikealta.'], fold: ['Tarkkailen sivusta.', 'Luovutan. Epäoptimaalista.'] },
 };
 
 function drawSuit(x, y, s, col, sc) {
@@ -146,7 +146,7 @@ function PokerScene(o) {
     NAMES.forEach(c => pay(c, 5));
     order = []; for (let i = 0; i < 3; i++) order.push(NAMES[(handNo + i) % 3]);
     bubbles = {}; stage = 0; S.noSwitch = true; reveal = false;
-    msg = 'Hand ' + (handNo + 1) + ' of ' + o.hands + '. Ante 5 each. Dealing...';
+    msg = 'Käsi ' + (handNo + 1) + '/' + o.hands + '. Pakkopanos 5 kullekin. Jaetaan...';
     for (let i = 0; i < 6; i++) setTimeout(() => Snd.sfx('card'), i * 90);
     state = 'dealing'; timer = 1.2;
   }
@@ -159,7 +159,7 @@ function PokerScene(o) {
   }
   function startRound() {
     r = { level: 0, put: {}, acted: {}, raises: 0, idx: 0 };
-    msg = stage === 1 ? 'The flop is out. Betting.' : 'Turn and river are out. Final betting.';
+    msg = stage === 1 ? 'Flop on jaettu. Panostus.' : 'Turn ja river on jaettu. Viimeinen panostus.';
     nextTurn();
   }
   function nextActor() {
@@ -179,21 +179,20 @@ function PokerScene(o) {
       const toCall = r.level - (r.put[me] || 0);
       const canRaise = r.raises < 2 && G.chips[me] > toCall;
       opts = [];
-      if (toCall > 0) { opts.push({ k: 'fold', t: 'FOLD' }); opts.push({ k: 'call', t: 'CALL ' + Math.min(toCall, G.chips[me]) }); }
-      else opts.push({ k: 'call', t: 'CHECK' });
-      if (canRaise) opts.push({ k: 'raise', t: (toCall > 0 ? 'RAISE +' : 'BET ') + bet[stage] });
+      if (toCall > 0) { opts.push({ k: 'fold', t: 'LUOVUTA' }); opts.push({ k: 'call', t: 'MAKSA ' + Math.min(toCall, G.chips[me]) }); }
+      else opts.push({ k: 'call', t: 'PASSAA' });
+      if (canRaise) opts.push({ k: 'raise', t: (toCall > 0 ? 'KOROTA +' : 'PANOSTA ') + bet[stage] });
       sel = opts.length > 1 && toCall > 0 ? 1 : 0;
     } else { state = 'ai'; timer = 0.9; }
   }
   function act(p, a) {
     const toCall = r.level - (r.put[p] || 0);
     r.acted[p] = true;
-    let label;
-    if (a === 'fold' && toCall > 0) { hand.folded[p] = true; label = 'FOLD'; Snd.sfx('back'); }
-    else if (a === 'raise' && r.raises < 2 && G.chips[p] > toCall) { pay(p, toCall + bet[stage]); r.level += bet[stage]; r.raises++; label = toCall > 0 ? 'RAISE +' + bet[stage] : 'BET ' + bet[stage]; Snd.sfx('chip'); }
-    else { pay(p, toCall); label = toCall > 0 ? 'CALL ' + toCall : 'CHECK'; if (toCall > 0) Snd.sfx('chip'); }
+    let label, kind = 'call';
+    if (a === 'fold' && toCall > 0) { hand.folded[p] = true; label = 'LUOVUTA'; kind = 'fold'; Snd.sfx('back'); }
+    else if (a === 'raise' && r.raises < 2 && G.chips[p] > toCall) { pay(p, toCall + bet[stage]); r.level += bet[stage]; r.raises++; label = toCall > 0 ? 'KOROTUS +' + bet[stage] : 'PANOS ' + bet[stage]; kind = 'raise'; Snd.sfx('chip'); }
+    else { pay(p, toCall); label = toCall > 0 ? 'MAKSU ' + toCall : 'PASSI'; if (toCall > 0) Snd.sfx('chip'); }
     if (p !== me && QUIPS[p] && Math.random() < 0.55) {
-      const kind = label.indexOf('FOLD') === 0 ? 'fold' : label.indexOf('CHECK') === 0 || label.indexOf('CALL') === 0 ? 'call' : 'raise';
       say(p, label + ': ' + pick(QUIPS[p][kind]));
     } else say(p, label);
     r.idx = (order.indexOf(p) + 1) % 3;
@@ -201,13 +200,13 @@ function PokerScene(o) {
   }
   function endRound() {
     if (stage >= 2) { finishHand(true); return; }
-    state = 'dealing'; timer = 0.8; msg = 'Next cards coming...';
+    state = 'dealing'; timer = 0.8; msg = 'Seuraavat kortit tulossa...';
   }
   function finishHand(showdown) {
     const act = activeList();
     let winners, name = '';
     reveal = showdown;
-    if (act.length === 1) { winners = act; name = 'everyone else folded'; }
+    if (act.length === 1) { winners = act; name = 'muut luovuttivat'; }
     else {
       let best = null; winners = [];
       act.forEach(c => {
@@ -219,7 +218,7 @@ function PokerScene(o) {
     }
     const share = Math.floor(hand.pot / winners.length);
     winners.forEach((w, i) => { G.chips[w] += share + (i === 0 ? hand.pot - share * winners.length : 0); G.pokerWins[w]++; });
-    lastWinMsg = winners.map(nm).join(' & ') + ' win' + (winners.length === 1 ? 's' : '') + ' ' + hand.pot + ' (' + name + ')';
+    lastWinMsg = winners.map(nm).join(' & ') + (winners.length === 1 ? ' voittaa ' : ' jakavat ') + hand.pot + ' (' + name + ')';
     msg = lastWinMsg;
     if (winners.indexOf(me) >= 0) { addMood(3); Snd.sfx('win'); } else { addMood(1); Snd.sfx('lose'); }
     const bigPot = hand.pot >= 70;
@@ -255,9 +254,9 @@ function PokerScene(o) {
       if (Input.pressed.a && resultT > 0.7) {
         handNo++;
         if (venue === 'home' ? handNo % 2 === 0 : true) {
-          drinkAll(1); Snd.sfx('clink'); Toast.show('Everyone takes a sip. Cheers!');
+          drinkAll(1); Snd.sfx('clink'); Toast.show('Kaikki ottavat huikan. Kippis!');
         }
-        if (handNo >= o.hands) { state = 'final'; resultT = 0; this.winnerChips = NAMES.slice().sort((a, b) => G.chips[b] - G.chips[a]); const w = this.winnerChips[0]; logEvent('poker_' + venue, nm(w) + ' won the ' + (venue === 'home' ? 'home poker night' : 'restaurant poker round') + ' with ' + G.chips[w] + ' chips.', true); G.flags['pokerWinner_' + venue] = w; }
+        if (handNo >= o.hands) { state = 'final'; resultT = 0; this.winnerChips = NAMES.slice().sort((a, b) => G.chips[b] - G.chips[a]); const w = this.winnerChips[0]; logEvent('poker_' + venue, nm(w) + ' voitti ' + (venue === 'home' ? 'kotipokeri-illan' : 'kuppilan pokerikierroksen') + ' ' + G.chips[w] + ' pelimerkillä.', true); G.flags['pokerWinner_' + venue] = w; }
         else startHand();
       }
     } else if (state === 'final') {
@@ -276,7 +275,7 @@ function PokerScene(o) {
       if (hand.board[i]) drawCard(x, y, hand.board[i], true);
       else { ctx.strokeStyle = 'rgba(255,255,255,0.18)'; ctx.strokeRect(x, y, 26, 36); }
     }
-    T('POT ' + hand.pot, 240, 108, { size: 12, align: 'center', c: '#ffd166' });
+    T('POTTI ' + hand.pot, 240, 108, { size: 12, align: 'center', c: '#ffd166' });
     for (let i = 0; i < Math.min(12, Math.floor(hand.pot / 10)); i++) circle(190 + i * 8, 130, 4, ['#d62c3a', '#2b4fb8', '#f0f0f0'][i % 3]);
     // seats
     NAMES.forEach(c => {
@@ -286,13 +285,13 @@ function PokerScene(o) {
       Sprites.head(ctx, c, 'in', p.x, p.y, 2, G.bac[c] > 0.35 ? 'drunk' : undefined);
       ctx.globalAlpha = 1;
       const isMe = c === me;
-      T(nm(c).toUpperCase() + (isMe ? ' (YOU)' : ''), p.x + 60, p.y + 4, { size: 10, c: CH[c].color });
-      T('Chips: ' + G.chips[c], p.x + 60, p.y + 17, { size: 9, c: '#fff' });
-      T({ rauno: 'loose-passive', tuomas: 'loose-aggro', antti: 'tight-aggro' }[c], p.x + 60, p.y + 29, { size: 7, c: '#9a96ae' });
+      T(nm(c).toUpperCase() + (isMe ? ' (SINÄ)' : ''), p.x + 60, p.y + 4, { size: 10, c: CH[c].color });
+      T('Merkit: ' + G.chips[c], p.x + 60, p.y + 17, { size: 9, c: '#fff' });
+      T({ rauno: 'löysä-passiivinen', tuomas: 'löysä-aggro', antti: 'tiukka-aggro' }[c], p.x + 60, p.y + 29, { size: 7, c: '#9a96ae' });
       if (!isMe) {
         const show = reveal && !folded;
         if (!folded) { drawCard(p.x + 58, p.y + 40, hand.hole[c][0], show); drawCard(p.x + 86, p.y + 40, hand.hole[c][1], show); }
-        else T('folded', p.x + 60, p.y + 50, { size: 9, c: '#9a96ae' });
+        else T('luovutti', p.x + 60, p.y + 50, { size: 9, c: '#9a96ae' });
       }
       const b = bubbles[c];
       if (b && b.t > 0) {
@@ -312,27 +311,27 @@ function PokerScene(o) {
       if (!folded && hand.board.length >= 3) { const v = bestOf(hand.hole[me].concat(hand.board)); T(HAND_NAMES[v[0]], 240, 178, { size: 8, align: 'center', c: '#cdd8ff' }); }
     }
     applyWobble(G.bac[me] * 0.8, t);
-    T('BEER', 418, 202, { size: 8 }); bar(446, 203, 22, 5, G.bac[me], '#f2a02e');
+    T('KALJA', 418, 202, { size: 8 }); bar(446, 203, 22, 5, G.bac[me], '#f2a02e');
     // bottom panel
     panel(8, 196, W - 16, 68, '#10162e');
     T(msg, 18, 202, { size: 10, c: '#f2e6c9' });
     if (state === 'human') {
       const toCall = r.level - (r.put[me] || 0);
-      T('Your move.  To call: ' + toCall + '   Pot: ' + hand.pot + '   (Left/Right, A)', 18, 218, { size: 8, c: '#9a96ae' });
+      T('Sinun vuorosi.  Maksettavaa: ' + toCall + '   Potti: ' + hand.pot + '   (vasen/oikea, A)', 18, 218, { size: 8, c: '#9a96ae' });
       opts.forEach((op, i) => {
         const x = 18 + i * 140;
         ctx.fillStyle = i === sel ? '#ffd166' : '#2a2f45'; ctx.fillRect(x, 232, 128, 24);
         T(op.t, x + 64, 238, { size: 11, align: 'center', c: i === sel ? '#101010' : '#f2e6c9', shadow: false });
       });
     } else if (state === 'ai') {
-      T(nm(actor) + ' is thinking...', 18, 224, { size: 10, c: '#9a96ae' });
+      T(nm(actor) + ' miettii...', 18, 224, { size: 10, c: '#9a96ae' });
     } else if (state === 'between') {
-      T(this.handsDone + ' / ' + o.hands + ' hands played.   A: next   C: switch guy', 18, 224, { size: 9, c: '#9a96ae' });
+      T(this.handsDone + ' / ' + o.hands + ' kättä pelattu.   A: seuraava   C: vaihda hahmoa', 18, 224, { size: 9, c: '#9a96ae' });
       if (Math.floor(t * 2) % 2 === 0) T('▼', W - 30, 244, { size: 10 });
     } else if (state === 'final') {
-      T('FINAL STANDINGS', 18, 218, { size: 10, c: '#ffd166' });
-      this.winnerChips.forEach((c, i) => T((i + 1) + '. ' + nm(c) + ': ' + G.chips[c] + ' chips', 18 + i * 150, 236, { size: 10, c: CH[c].color }));
-      T('A: continue', W - 20, 246, { size: 8, align: 'right', c: '#9a96ae' });
+      T('LOPPUTULOKSET', 18, 218, { size: 10, c: '#ffd166' });
+      this.winnerChips.forEach((c, i) => T((i + 1) + '. ' + nm(c) + ': ' + G.chips[c] + ' merkkiä', 18 + i * 150, 236, { size: 10, c: CH[c].color }));
+      T('A: jatka', W - 20, 246, { size: 8, align: 'right', c: '#9a96ae' });
     }
     drawToast();
   };

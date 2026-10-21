@@ -10,13 +10,13 @@ const sk = (k) => SKILL[k][G.player];
 
 // ---------- shop ----------
 const SHOP_ITEMS = [
-  { id: 'beer', name: 'Beer, 12 cans', price: 12 },
-  { id: 'sausage', name: 'Grill sausages', price: 6 },
-  { id: 'onion', name: 'Onions (the good ones)', price: 2 },
-  { id: 'chips', name: 'Chips & dip', price: 4 },
-  { id: 'mustard', name: 'Mustard of destiny', price: 2 },
-  { id: 'herring', name: 'Suspicious herring', price: 5 },
-  { id: 'cards', name: 'Fresh deck of cards', price: 3 },
+  { id: 'beer', name: 'Kalja, 12 tölkkiä', price: 12 },
+  { id: 'sausage', name: 'Grillimakkarat', price: 6 },
+  { id: 'onion', name: 'Sipulit (ne hyvät)', price: 2 },
+  { id: 'chips', name: 'Sipsit ja dippi', price: 4 },
+  { id: 'mustard', name: 'Kohtalon sinappi', price: 2 },
+  { id: 'herring', name: 'Epäilyttävä silakka', price: 5 },
+  { id: 'cards', name: 'Uusi korttipakka', price: 3 },
 ];
 function ShopScene(o) {
   let sel = 0, t = 0, msg = '', picked = {};
@@ -24,7 +24,7 @@ function ShopScene(o) {
   const total = () => SHOP_ITEMS.reduce((a, it) => a + (picked[it.id] ? it.price : 0), 0);
   return {
     music: 'day', noSwitch: false,
-    enter() { t = 0; sel = 0; picked = {}; msg = 'Budget: ' + BUDGET + ' EUR. Pick wisely.'; },
+    enter() { t = 0; sel = 0; picked = {}; msg = 'Budjetti: ' + BUDGET + ' €. Valitse viisaasti.'; },
     bot() { if (sel < SHOP_ITEMS.length) { if (sel < 3 && !picked[SHOP_ITEMS[sel].id]) Input.pressed.a = true; else Input.pressed.down = true; } else Input.pressed.a = true; },
     update(dt) {
       t += dt;
@@ -35,7 +35,7 @@ function ShopScene(o) {
         if (sel < SHOP_ITEMS.length) {
           const it = SHOP_ITEMS[sel];
           if (picked[it.id]) { delete picked[it.id]; Snd.sfx('back'); }
-          else if (total() + it.price > BUDGET) { Snd.sfx('bad'); msg = 'Not enough money for that!'; }
+          else if (total() + it.price > BUDGET) { Snd.sfx('bad'); msg = 'Rahat eivät riitä siihen!'; }
           else { picked[it.id] = true; Snd.sfx('coin'); msg = ''; }
         } else {
           G.shop = Object.assign({}, picked);
@@ -44,8 +44,8 @@ function ShopScene(o) {
           if (picked.cards) G.flags.freshCards = true;
           if (picked.herring) G.flags.herring = true;
           if (picked.chips) addMood(3);
-          const items = SHOP_ITEMS.filter(i => picked[i.id]).map(i => i.name.toLowerCase()).join(', ') || 'absolutely nothing';
-          logEvent('shop', 'The shopping list: ' + items + '. Cashier verdict: "Interesting."');
+          const items = SHOP_ITEMS.filter(i => picked[i.id]).map(i => i.name.toLowerCase()).join(', ') || 'ei yhtään mitään';
+          logEvent('shop', 'Ostoslista: ' + items + '. Kassan tuomio: "Mielenkiintoista."');
           Snd.sfx('good');
           o.done();
         }
@@ -54,20 +54,20 @@ function ShopScene(o) {
     draw() {
       BG.shop(t);
       panel(16, 22, 300, 220, '#141a33');
-      T('THE SHOP', 30, 30, { size: 14, c: '#ffd166' });
+      T('KAUPPA', 30, 30, { size: 14, c: '#ffd166' });
       SHOP_ITEMS.forEach((it, i) => {
         const y = 56 + i * 22, on = picked[it.id];
         T((sel === i ? '► ' : '  ') + (on ? '[x] ' : '[ ] ') + it.name, 28, y, { size: 10, c: sel === i ? '#ffd166' : (on ? '#8fe36a' : '#f2e6c9') });
-        T(it.price + ' EUR', 306, y, { size: 10, align: 'right', c: '#b8b0a0' });
+        T(it.price + ' €', 306, y, { size: 10, align: 'right', c: '#b8b0a0' });
       });
-      T((sel === SHOP_ITEMS.length ? '► ' : '  ') + 'PAY & LEAVE', 28, 56 + SHOP_ITEMS.length * 22 + 6, { size: 11, c: sel === SHOP_ITEMS.length ? '#ffd166' : '#ff7aa8' });
+      T((sel === SHOP_ITEMS.length ? '► ' : '  ') + 'MAKSA JA LÄHDE', 28, 56 + SHOP_ITEMS.length * 22 + 6, { size: 11, c: sel === SHOP_ITEMS.length ? '#ffd166' : '#ff7aa8' });
       panel(330, 22, 134, 110, '#141a33');
-      T('CART', 340, 30, { size: 11, c: '#ffd166' });
-      T('Total: ' + total() + ' EUR', 340, 50, { size: 10 });
-      T('Left:  ' + (BUDGET - total()) + ' EUR', 340, 64, { size: 10, c: BUDGET - total() < 4 ? '#ff7a7a' : '#8fe36a' });
+      T('KORI', 340, 30, { size: 11, c: '#ffd166' });
+      T('Yhteensä: ' + total() + ' €', 340, 50, { size: 10 });
+      T('Jäljellä: ' + (BUDGET - total()) + ' €', 340, 64, { size: 10, c: BUDGET - total() < 4 ? '#ff7a7a' : '#8fe36a' });
       wrap(msg, 120, 8).forEach((l, i) => T(l, 340, 86 + i * 10, { size: 8, c: '#cdd8ff' }));
       Sprites.draw(ctx, G.player, 'out', 395, 250, { flip: true });
-      T('Up/Down, A = pick', 400, 148, { size: 8, align: 'center', c: '#8c88a0' });
+      T('Ylös/alas, A = valitse', 400, 148, { size: 8, align: 'center', c: '#8c88a0' });
       drawHUD(); drawToast();
     },
   };
@@ -129,7 +129,7 @@ function RCScene(o) {
           this.rating = time < 16 ? 'S' : time < 21 ? 'A' : time < 29 ? 'B' : 'C';
           addMood({ S: 8, A: 5, B: 2, C: 0 }[this.rating]);
           Snd.sfx('finish');
-          logEvent('rc', nm(G.player) + ' drove the RC course in ' + time.toFixed(1) + ' seconds with ' + hits + ' cone casualt' + (hits === 1 ? 'y' : 'ies') + '.', true);
+          logEvent('rc', nm(G.player) + ' ajoi radio-ohjattavan auton radan ajassa ' + time.toFixed(1).replace('.', ',') + ' sekuntia ' + hits + ' kaatuneella kartiolla.', true);
           G.stats.rc = time;
         } else Snd.sfx('checkpoint');
       }
@@ -162,16 +162,16 @@ function RCScene(o) {
       ctx.restore();
       // HUD
       drawHUD();
-      T('TIME ' + (time + (state === 'done' ? 0 : penalty)).toFixed(1), 6, 36, { size: 10, c: '#fff' });
-      T('Cones: ' + hits, 6, 48, { size: 8, c: '#ff9a4a' });
-      T('Up/A gas  Down brake  Left/Right steer', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
-      if (state === 'ready') { T(this.ready > 1 ? 'GET READY...' : 'GO!', W / 2, 110, { size: 26, align: 'center', c: '#ffd166' }); T('Tuomas drives best (C to switch)', W / 2, 146, { size: 8, align: 'center', c: '#b8b0a0' }); }
+      T('AIKA ' + (time + (state === 'done' ? 0 : penalty)).toFixed(1).replace('.', ','), 6, 36, { size: 10, c: '#fff' });
+      T('Kartiot: ' + hits, 6, 48, { size: 8, c: '#ff9a4a' });
+      T('Ylös/A kaasu  Alas jarru  Vasen/oikea ohjaus', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
+      if (state === 'ready') { T(this.ready > 1 ? 'VALMISTAUDU...' : 'LÄHTÖ!', W / 2, 110, { size: 26, align: 'center', c: '#ffd166' }); T('Tuomas ajaa parhaiten (C vaihtaa)', W / 2, 146, { size: 8, align: 'center', c: '#b8b0a0' }); }
       if (state === 'done') {
         panel(130, 80, 220, 90, '#10162e');
-        T('FINISH!', W / 2, 90, { size: 16, align: 'center', c: '#ffd166' });
-        T('Time ' + time.toFixed(1) + 's (incl. penalties)', W / 2, 114, { size: 10, align: 'center' });
-        T('Rating: ' + this.rating, W / 2, 130, { size: 14, align: 'center', c: '#8fe36a' });
-        T('A: continue', W / 2, 152, { size: 8, align: 'center', c: '#b8b0a0' });
+        T('MAALI!', W / 2, 90, { size: 16, align: 'center', c: '#ffd166' });
+        T('Aika ' + time.toFixed(1).replace('.', ',') + ' s (sis. rangaistukset)', W / 2, 114, { size: 10, align: 'center' });
+        T('Arvosana: ' + this.rating, W / 2, 130, { size: 14, align: 'center', c: '#8fe36a' });
+        T('A: jatka', W / 2, 152, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },
@@ -224,7 +224,7 @@ function DroneScene(o) {
         if (dist(pad[0], pad[1], d.x, d.y) < 22 && sp < 45) {
           landed = true; state = 'done'; Snd.sfx('finish'); addMood(8);
           result = { landed: true, tree: false, rings: idx };
-          logEvent('drone_land', nm(G.player) + ' landed the drone perfectly. Everyone assumed it was luck.', true);
+          logEvent('drone_land', nm(G.player) + ' laskeutui dronella täydellisesti. Kaikki olettivat sen olleen tuuria.', true);
         } else this.crash(false);
       }
     },
@@ -246,8 +246,8 @@ function DroneScene(o) {
       result = { landed: false, tree: hitTree, rings: idx };
       G.flags.droneTree = hitTree; G.flags.droneCrash = true;
       logEvent(hitTree ? 'drone_tree' : 'drone_crash', hitTree
-        ? "Tuomas's drone met a tree. The tree won."
-        : "Tuomas's drone met the ground at an optimistic speed.", true);
+        ? 'Tuomaksen drone kohtasi puun. Puu voitti.'
+        : 'Tuomaksen drone kohtasi maan toiveikkaalla nopeudella.', true);
     },
     draw() {
       ctx.save();
@@ -281,18 +281,18 @@ function DroneScene(o) {
       ctx.restore();
       ctx.restore();
       drawHUD();
-      T('BATTERY', 6, 36, { size: 8 }); bar(52, 37, 60, 5, bat / 60, bat < 12 ? '#ff4a4a' : '#7cf04a');
-      T('Rings: ' + Math.min(idx, rings.length) + '/' + rings.length, 6, 48, { size: 8, c: '#ffd166' });
-      if (idx >= rings.length && state === 'fly') T('LAND ON THE H PAD: slow down and press A!', W / 2, 20, { size: 10, align: 'center', c: '#ffd166' });
-      if (wind[0] || wind[1]) T('WIND!', W - 60, 40, { size: 10, c: '#bfe3ff' });
-      T('Arrows: fly', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
-      if (state === 'ready') { T(this.ready > 1 ? 'PRE-FLIGHT CHECK...' : 'TAKEOFF!', W / 2, 110, { size: 22, align: 'center', c: '#ffd166' }); T('Fly through the rings. Avoid the trees. (Good luck.)', W / 2, 142, { size: 9, align: 'center', c: '#fff' }); }
-      if (state === 'crash') T(tree ? 'CRASH! Into a tree!' : 'CRASH!', W / 2, 100, { size: 20, align: 'center', c: '#ff4a4a' });
+      T('AKKU', 6, 36, { size: 8 }); bar(52, 37, 60, 5, bat / 60, bat < 12 ? '#ff4a4a' : '#7cf04a');
+      T('Renkaat: ' + Math.min(idx, rings.length) + '/' + rings.length, 6, 48, { size: 8, c: '#ffd166' });
+      if (idx >= rings.length && state === 'fly') T('LASKEUDU H-ALUSTALLE: hidasta ja paina A!', W / 2, 20, { size: 10, align: 'center', c: '#ffd166' });
+      if (wind[0] || wind[1]) T('TUULTA!', W - 60, 40, { size: 10, c: '#bfe3ff' });
+      T('Nuolet: lennä', W / 2, H - 12, { size: 8, align: 'center', c: '#b8b0a0' });
+      if (state === 'ready') { T(this.ready > 1 ? 'LENTOA EDELTÄVÄ TARKISTUS...' : 'NOUSU!', W / 2, 110, { size: 22, align: 'center', c: '#ffd166' }); T('Lennä renkaiden läpi. Vältä puut. (Onnea.)', W / 2, 142, { size: 9, align: 'center', c: '#fff' }); }
+      if (state === 'crash') T(tree ? 'ONNETTOMUUS! Puuhun!' : 'ONNETTOMUUS!', W / 2, 100, { size: 20, align: 'center', c: '#ff4a4a' });
       if (state === 'done') {
         panel(130, 80, 220, 80, '#10162e');
-        T(landed ? 'PERFECT LANDING' : (tree ? 'TREE: 1  DRONE: 0' : 'THE DRONE IS DOWN'), W / 2, 92, { size: 13, align: 'center', c: landed ? '#8fe36a' : '#ff7a7a' });
-        T('Rings: ' + Math.min(idx, rings.length) + ' / ' + rings.length, W / 2, 116, { size: 10, align: 'center' });
-        T('A: continue', W / 2, 140, { size: 8, align: 'center', c: '#b8b0a0' });
+        T(landed ? 'TÄYDELLINEN LASKEUTUMINEN' : (tree ? 'PUU: 1  DRONE: 0' : 'DRONE ON ALAS'), W / 2, 92, { size: 13, align: 'center', c: landed ? '#8fe36a' : '#ff7a7a' });
+        T('Renkaat: ' + Math.min(idx, rings.length) + ' / ' + rings.length, W / 2, 116, { size: 10, align: 'center' });
+        T('A: jatka', W / 2, 140, { size: 8, align: 'center', c: '#b8b0a0' });
       }
       drawToast();
     },

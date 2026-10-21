@@ -12,12 +12,12 @@ A step-by-step plan for building **Miesten illanvietto**. Each milestone ends wi
 | Playable character | Each episode suggests the "owner" of that episode (Tuomas: toys, Antti: cooking, ...), but the player can switch character at any time |
 | Poker | Lightweight, simplified version (no full betting rules) |
 | Audio | Sound effects and 8-bit chiptune music, synthesized with the Web Audio API (no audio files) |
-| Text language | English first; Finnish can be added later if wanted |
+| Text language | On-screen text and dialogue in Finnish (since v1.1); code, comments and docs in English |
 | Hosting/privacy | Public repo, private-joke game; reference photos are not stored in the repo |
 
 ## Working rules
 
-- All code, comments, UI text and docs are in English.
+- Code, comments and docs are in English; on-screen text and dialogue are in Finnish.
 - Everything stays in one HTML file in the end. During development we may split into modules, but the shipped `index.html` is self-contained (sprites can be embedded as data or drawn in code).
 - After every milestone: update the README "Status" line, tick the boxes below, play-test on a phone, and write down what felt wrong.
 
@@ -129,7 +129,7 @@ Done when: two different playthroughs produce visibly different credits.
 
 ## Backlog / ideas
 
-- Finnish localization
+- Finnish localization (done in v1.1)
 - More hat and outfit variants, drunk and sleepy expressions
 - Extra minigames (beer pong, karaoke, kebab stand on the way home)
 - Photo mode with the real group photo as a bonus ending

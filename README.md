@@ -8,7 +8,7 @@ The whole game lives in one HTML file ([`index.html`](index.html)), so there is 
 
 **On a phone:** play in **landscape** (hold the phone sideways). The game is designed for touch controls and a landscape screen.
 
-> Status: **v1.0, first complete playable version.** See [PROGRESS.md](PROGRESS.md) for the status log and [MILESTONES.md](MILESTONES.md) for the plan.
+> Status: **v1.1, complete playable version, game text and dialogue in Finnish.** See [PROGRESS.md](PROGRESS.md) for the status log and [MILESTONES.md](MILESTONES.md) for the plan.
 
 ## Controls
 
@@ -16,8 +16,8 @@ The whole game lives in one HTML file ([`index.html`](index.html)), so there is 
 |---|---|---|
 | Move / menu | Arrow keys or WASD | On-screen D-pad (shown only when needed) |
 | Confirm / advance / action | Space, Enter or Z | **A** button, or tap anywhere on the screen |
-| Switch character | C or Tab | **SWITCH** button |
-| Mute | M | **SOUND** button |
+| Switch character | C or Tab | **VAIHDA** button |
+| Mute | M | **ÄÄNI** button |
 
 Every episode suggests which of the three guys to play, but you can switch at any time. Poker lets you switch between hands.
 

@@ -2,7 +2,7 @@
 
 Live status of the build. Updated after every milestone. See `MILESTONES.md` for the plan and `HANDOFF.md` for the full technical description.
 
-**Current status: first complete, playable version (v1.0) is on `master`.** All seven episodes, the morning epilogue and the credits work from the title screen to the end. Verified with automated bot playthroughs in headless Chromium and phone-landscape emulation; not yet verified on a real phone.
+**Current status: v1.1 is on `master`: the complete game with all on-screen text and dialogue in Finnish.** All seven episodes, the morning epilogue and the credits work from the title screen to the end. Verified with automated bot playthroughs in headless Chromium and phone-landscape emulation; not yet verified on a real phone.
 
 ## Milestone status
 
@@ -22,6 +22,7 @@ Live status of the build. Updated after every milestone. See `MILESTONES.md` for
 
 ## Log
 
+- **v1.1**: Finnish localization of all visible text and dialogue (story, cards, HUD, shop, minigames, poker, credits, touch buttons, rotate overlay, `lang="fi"`). Names are inflected via `nf()`/`{P:all}` tokens. Poker AI labels shortened to fit. Unit tests and a bot playthrough to the credits pass; screenshots checked for text fit.
 - **v1.0 (this version)**: complete playable game, headless bot playthrough reaches credits without errors.
   - Fixed during testing: dialogue box covered the characters (floors raised to y=190-196); poker AI cards overlapped the board (seats moved to the edges); HUD badge overlapped poker seat (poker draws its own mini HUD); touch D-pad covered the dialogue (hidden when unneeded; SWITCH/SOUND moved under the HUD badge); credits captions were truncated (short caption table); RC rating thresholds were too lenient (bot finishes in ~11 s, humans should take 15-30 s).
 - **v0.2**: sprites, UI, dialogue, minigames drafted.
@@ -44,4 +45,4 @@ or open `index.html` and play: Title -> A.
 3. Tune difficulty (RC ratings, endurance, steam speed, cooking window) after real playtests.
 4. Content pass: more dialogue, more random events, inside jokes only the three friends know (names of real places, nicknames).
 5. Art pass: more expressions/poses, better car interior and restaurant, optional pixel versions of real group photo for a bonus ending.
-6. Optional: Finnish localization, save/continue.
+6. Optional: save/continue.

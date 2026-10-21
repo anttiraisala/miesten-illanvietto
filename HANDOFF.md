@@ -28,7 +28,7 @@ Tone: honest, silly, absurd, with a warm, playful male-friendship ("brotherly lo
 9. Poker is a lightweight version. Sound effects plus 8-bit music.
 10. Playable on a phone in landscape. All in one HTML file. README links to the playable page.
 11. Everything committed to the `master` branch (no `main`).
-12. Everything in the repo (code, comments, UI text, docs, commit messages) is **English**. Localization only if asked.
+12. Code, comments, docs, commit messages and file names are **English**. The on-screen text and all character dialogue are **Finnish** (the owner explicitly asked for this in v1.1). Name inflections use `nf(char, case)` and the tokens `{P:all}`, `{T:gen}` etc. in cutscene text (see section on dialogue).
 
 ---
 
@@ -109,7 +109,7 @@ Text tokens `{P}` (current player name), `{O1}`/`{O2}` (the other two), `{T}` (t
 ## 5. Visual specification
 
 ### Canvas and UI
-480x270. Panels: 2px cream border (`#f2e6c9`), 1px black, fill `#141a33`. HUD top-left: three 50px bars (MOOD pink `#ff7aa8`, FOOD yellow `#ffd166` = 1 - hunger, BEER amber `#f2a02e`); top-right badge with current character head + name + "C: switch". Character colors: Rauno `#8fe36a`, Tuomas `#f2a65a`, Antti `#9ec5ff`.
+480x270. Panels: 2px cream border (`#f2e6c9`), 1px black, fill `#141a33`. HUD top-left: three 50px bars (MOOD pink `#ff7aa8`, FOOD yellow `#ffd166` = 1 - hunger, BEER amber `#f2a02e`); top-right badge with current character head + name + "C: vaihda" (Finnish UI labels: FIILIS / MAHA / KALJA). Character colors: Rauno `#8fe36a`, Tuomas `#f2a65a`, Antti `#9ec5ff`.
 
 ### Sprites (`20-sprites.js`, 32x62 px, feet at bottom)
 Built from rectangles in a `make(name, variant, expr, pose)` function; cached per key. Variants: `out` (headwear), `in`, `sauna` (bare head + towel). Expressions: `normal`, `drunk` (heavy lids + red cheeks), `hot` (red tint + sweat). Poses: `idle`, `walk0`, `walk1` (one leg shortened). Torso half-widths: Rauno 9, Tuomas 11, Antti 13 (makes Antti the widest). Key colors:
@@ -167,7 +167,7 @@ Seats are re-laid out when the player switches character between hands. Quips pe
 
 ## 8. Audio
 
-`TRACKS` in `10-audio.js`: `title, day, sauna, kitchen, poker, restaurant, night, credits`, each `{bpm, wave, lead, bass, perc}` where lead/bass are token strings (one token = one eighth note; note names like `C5`, `Bb4`; `-` rest; `_` hold; `|` ignored) and perc is a string (`k` kick, `s` snare, `h` hat, `.` none). A scheduler (`setInterval` 40 ms, 0.2 s lookahead) plays them in a loop. SFX are synthesized per name in `Snd.sfx(name)` (select, confirm, back, bad, good, coin, switch, crash, cone, bump, checkpoint, finish, ring, sizzle, steam, card, chip, clink, love, burn, win, lose, tick, whoosh, hot). Audio is unlocked on the first key/touch (`Snd.unlock`), required by mobile browsers. M or the SOUND button mutes (persisted).
+`TRACKS` in `10-audio.js`: `title, day, sauna, kitchen, poker, restaurant, night, credits`, each `{bpm, wave, lead, bass, perc}` where lead/bass are token strings (one token = one eighth note; note names like `C5`, `Bb4`; `-` rest; `_` hold; `|` ignored) and perc is a string (`k` kick, `s` snare, `h` hat, `.` none). A scheduler (`setInterval` 40 ms, 0.2 s lookahead) plays them in a loop. SFX are synthesized per name in `Snd.sfx(name)` (select, confirm, back, bad, good, coin, switch, crash, cone, bump, checkpoint, finish, ring, sizzle, steam, card, chip, clink, love, burn, win, lose, tick, whoosh, hot). Audio is unlocked on the first key/touch (`Snd.unlock`), required by mobile browsers. M or the ÄÄNI (sound) button mutes (persisted).
 
 ---
 
@@ -192,7 +192,7 @@ Definition of done for any change: build passes, `tests/unit.js` passes, `tests/
 
 - Not yet verified on real phones (only Chromium emulation). iOS audio unlock, fonts and safe-area insets should be checked.
 - Sprites are procedural and hand-coded; more poses (sitting, laughing) and a drunk walk would help. Real-photo likeness was done by reading photos, not by image conversion.
-- Dialogue is English only. Finnish could be added as a second string table.
+- All visible text and dialogue is Finnish, written inline in the source (no string table). Names are inflected with `FI`/`nf()` in `00-core.js`; `subst()` in `40-cutscene.js` accepts `{P}`, `{O1}`, `{O2}`, `{T}` optionally followed by `:nom|gen|all|par|ine|ela|ill|ade`. Keep wording short: the dialogue box wraps at about 62 chars per line and choice options must fit one line.
 - Ideas: more minigames (beer pong, karaoke, kebab stand), save/continue, a "photo mode" bonus ending with the real group photo, volume slider, more random events per episode.
 
 ---
@@ -211,4 +211,4 @@ Definition of done for any change: build passes, `tests/unit.js` passes, `tests/
 
 ### Prompt that reproduces this project (for another AI)
 
-> Build a single-file browser game (HTML5 canvas, vanilla JS, no assets, 480x270 pixel art scaled to fit, landscape phone support with on-screen buttons) called "Miesten illanvietto". Three bearded, bespectacled friends (Rauno, Tuomas, Antti; looks and roles in HANDOFF.md section 1 and 5) spend an evening together: meeting and shopping, RC car and drone (Tuomas), sauna (steam timing, endurance, compliments, group hug), cooking (Antti), lightweight poker at home (Tuomas loose-aggressive, Antti tight-aggressive, Rauno loose-passive), a pub with a second poker round, the way home, a morning card, then end credits with polaroid snapshots alternating left/right while text scrolls on the other side, generated from an event log. Each episode starts with a text card; the player may switch character any time. Use Web Audio for 8-bit music and SFX. Keep all code and text in English. Source in `src/`, built to `index.html` with `tools/build.py`; commit to the `master` branch after every milestone and keep PROGRESS.md updated.
+> Build a single-file browser game (HTML5 canvas, vanilla JS, no assets, 480x270 pixel art scaled to fit, landscape phone support with on-screen buttons) called "Miesten illanvietto". Three bearded, bespectacled friends (Rauno, Tuomas, Antti; looks and roles in HANDOFF.md section 1 and 5) spend an evening together: meeting and shopping, RC car and drone (Tuomas), sauna (steam timing, endurance, compliments, group hug), cooking (Antti), lightweight poker at home (Tuomas loose-aggressive, Antti tight-aggressive, Rauno loose-passive), a pub with a second poker round, the way home, a morning card, then end credits with polaroid snapshots alternating left/right while text scrolls on the other side, generated from an event log. Each episode starts with a text card; the player may switch character any time. Use Web Audio for 8-bit music and SFX. Keep code and comments in English, but write all on-screen text and dialogue in Finnish. Source in `src/`, built to `index.html` with `tools/build.py`; commit to the `master` branch after every milestone and keep PROGRESS.md updated.

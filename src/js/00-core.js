@@ -98,6 +98,13 @@ function drinkBeer(who, n) {
 function drinkAll(n) { NAMES.forEach(c => drinkBeer(c, n)); }
 const others = (me) => NAMES.filter(c => c !== (me || G.player));
 const nm = c => CH[c].name;
+// Finnish inflections of the names (nom, gen, all, par, ine, ela, ill, ade)
+const FI = {
+  rauno:  { nom: 'Rauno', gen: 'Raunon', all: 'Raunolle', par: 'Raunoa', ine: 'Raunossa', ela: 'Raunosta', ill: 'Raunoon', ade: 'Raunolla' },
+  tuomas: { nom: 'Tuomas', gen: 'Tuomaksen', all: 'Tuomakselle', par: 'Tuomasta', ine: 'Tuomaksessa', ela: 'Tuomaksesta', ill: 'Tuomakseen', ade: 'Tuomaksella' },
+  antti:  { nom: 'Antti', gen: 'Antin', all: 'Antille', par: 'Anttia', ine: 'Antissa', ela: 'Antista', ill: 'Anttiin', ade: 'Antilla' },
+};
+const nf = (c, k) => FI[c][k || 'nom'];
 
 // event log: used to build the credits
 function logEvent(id, credit, snap) {
@@ -152,7 +159,7 @@ const Scenes = {
       const i = NAMES.indexOf(G.player);
       G.player = NAMES[(i + 1) % 3];
       Snd.sfx('switch');
-      Toast.show('Now playing: ' + nm(G.player));
+      Toast.show('Pelaajana nyt: ' + nm(G.player));
       if (this.cur.onSwitch) this.cur.onSwitch();
     }
     if (this.state !== 'out' || true) this.cur.update(dt);

@@ -1,22 +1,22 @@
 // End credits: polaroid "photos" hop between left and right while text scrolls on the opposite side.
 
 const CREDIT_HEAD = {
-  shop: 'SUPPLY CHAIN', rc: 'MOTORSPORT', drone_tree: 'AVIATION', drone_land: 'AVIATION', drone_crash: 'AVIATION',
-  steam: 'THERMAL ARTS', endurance: 'ENDURANCE', compliment: 'EMOTIONAL SUPPORT', hug: 'EMOTIONAL SUPPORT', hug_fail: 'EMOTIONAL SUPPORT',
-  porch: 'LAKE RELATIONS', cook: 'CULINARY ARTS', golden: 'CULINARY ARTS', poker_home: 'GAMBLING (FOR HONOR)', poker_restaurant: 'GAMBLING (FOR HONOR)', poker: 'GAMBLING (FOR HONOR)',
-  seagull: 'WILDLIFE', cat: 'WILDLIFE', kebab: 'LOGISTICS', cheers: 'HYDRATION', lamp: 'URBAN PLANNING', ride: 'TRANSPORT',
+  shop: 'HUOLTOVARMUUS', rc: 'MOOTTORIURHEILU', drone_tree: 'ILMAILU', drone_land: 'ILMAILU', drone_crash: 'ILMAILU',
+  steam: 'LÖYLYTAITEET', endurance: 'KESTÄVYYS', compliment: 'HENKINEN TUKI', hug: 'HENKINEN TUKI', hug_fail: 'HENKINEN TUKI',
+  porch: 'JÄRVISUHTEET', cook: 'KULINARISMI', golden: 'KULINARISMI', poker_home: 'HAZARDI (KUNNIAN VUOKSI)', poker_restaurant: 'HAZARDI (KUNNIAN VUOKSI)', poker: 'HAZARDI (KUNNIAN VUOKSI)',
+  seagull: 'ELÄINKUNTA', cat: 'ELÄINKUNTA', kebab: 'LOGISTIIKKA', cheers: 'NESTETASAPAINO', lamp: 'KAUPUNKISUUNNITTELU', ride: 'LIIKENNE',
 };
 const CAPTION = {
-  shop: 'Shopping spree', rc: 'Kevin at full speed', drone_tree: 'Tree 1, Drone 0', drone_land: 'Perfect landing', drone_crash: 'Hard landing',
-  steam: 'Perfect löyly', endurance: 'Last man standing', compliment: 'Manly tears', hug: 'The hug', hug_fail: 'Manly pat',
-  porch: 'Porch beers', cook: 'Dinner is served', golden: 'Golden perfection', poker_home: 'Home poker champion', poker_restaurant: 'Pub poker champion', poker: 'Big pot',
-  seagull: 'The one that got away', cat: 'Cat approved', kebab: 'Kebab break', cheers: 'Cheers!', lamp: 'New friend', ride: 'Ride home',
+  shop: 'Ostosreissu', rc: 'Kevin täysillä', drone_tree: 'Puu 1, drone 0', drone_land: 'Täydellinen lasku', drone_crash: 'Kova lasku',
+  steam: 'Täydellinen löyly', endurance: 'Viimeinen mies pystyssä', compliment: 'Miehekkäät kyyneleet', hug: 'Se hali', hug_fail: 'Miehekäs taputus',
+  porch: 'Kuistikaljat', cook: 'Ruoka on valmista', golden: 'Kullanruskea täydellisyys', poker_home: 'Kotipokerin mestari', poker_restaurant: 'Kuppilapokerin mestari', poker: 'Iso potti',
+  seagull: 'Se joka pääsi karkuun', cat: 'Kissa hyväksyi', kebab: 'Kebabtauko', cheers: 'Kippis!', lamp: 'Uusi ystävä', ride: 'Kotimatka',
 };
 const CREDIT_EXTRA = {
-  rc: ['Kevin the RC car: as himself'], drone_tree: ['The tree: as itself', 'Drone retrieval: pending'], drone_crash: ['Gravity: as itself'],
-  steam: ['Steam consultant: Rauno'], endurance: ['Cooling off: nobody'], cook: ['Kitchen safety officer: none'], golden: ['Sausages: as themselves'],
-  porch: ['Lake: as itself'], poker_home: ['Poker faces: sourced locally'], poker_restaurant: ['Chips: emotionally damaged'],
-  ride: ['Taxi: eventually'], hug: ['Towels: reluctantly'], cheers: ['Beer: plentiful'], seagull: ['Seagull: as the winner'],
+  rc: ['Radio-ohjattava Kevin: itsenään'], drone_tree: ['Puu: itsenään', 'Dronen noutaminen: kesken'], drone_crash: ['Painovoima: itsenään'],
+  steam: ['Löylykonsultti: Rauno'], endurance: ['Viilentyminen: ei kukaan'], cook: ['Keittiön turvallisuusvastaava: ei ketään'], golden: ['Makkarat: itsenään'],
+  porch: ['Järvi: itsenään'], poker_home: ['Pokerinaamat: paikallista tuotantoa'], poker_restaurant: ['Pelimerkit: henkisesti rikki'],
+  ride: ['Taksi: lopulta'], hug: ['Pyyhkeet: vastahakoisesti'], cheers: ['Kalja: runsaasti'], seagull: ['Lokki: voittajana'],
 };
 
 function drawPolaroid(x, y, rot, snap) {
@@ -53,7 +53,7 @@ function CreditsScene() {
   let slides = [], i = 0, t = 0, prev = null, prevT = 0, ended = false;
   function build() {
     slides = [];
-    slides.push({ head: 'MIESTEN ILLANVIETTO', lines: ['A production of three friends', '', 'STARRING', 'Rauno as The Professor', 'Tuomas as The Pilot (allegedly)', 'Antti as The Chef', '', 'Filmed on location in Finland'], snap: { draw: drawPoster, caption: 'the guys' } });
+    slides.push({ head: 'MIESTEN ILLANVIETTO', lines: ['Kolmen kaverin tuotanto', '', 'PÄÄROOLEISSA', 'Rauno Professorina', 'Tuomas Lentäjänä (väitetysti)', 'Antti Kokkina', '', 'Kuvattu Suomessa'], snap: { draw: drawPoster, caption: 'pojat' } });
     const byId = {};
     G.snaps.forEach(s => { byId[s.id] = s; });
     let ids = Object.keys(byId);
@@ -64,20 +64,20 @@ function CreditsScene() {
       const text = log ? log.credit : s.caption;
       const lines = wrap(text, 190, 9);
       (CREDIT_EXTRA[id] || []).forEach(x => { lines.push(''); lines.push(x); });
-      slides.push({ head: CREDIT_HEAD[id] || 'HIGHLIGHTS', lines, snap: { canvas: s.canvas, caption: CAPTION[id] || (s.caption.length > 30 ? s.caption.slice(0, 28) + '..' : s.caption) } });
+      slides.push({ head: CREDIT_HEAD[id] || 'KOHOKOHDAT', lines, snap: { canvas: s.canvas, caption: CAPTION[id] || (s.caption.length > 30 ? s.caption.slice(0, 28) + '..' : s.caption) } });
     });
-    const label = G.mood >= 85 ? 'LEGENDARY EVENING' : G.mood >= 65 ? 'GREAT EVENING' : G.mood >= 45 ? 'SOLID EVENING' : 'AWKWARD BUT MEMORABLE EVENING';
-    const stat = [label, '', 'Beers'].concat(NAMES.map(c => nm(c) + ': ' + G.beers[c]));
+    const label = G.mood >= 85 ? 'LEGENDAARINEN ILTA' : G.mood >= 65 ? 'LOISTAVA ILTA' : G.mood >= 45 ? 'VANKKA ILTA' : 'KIUSALLINEN MUTTA MUISTETTAVA ILTA';
+    const stat = [label, '', 'Kaljat'].concat(NAMES.map(c => nm(c) + ': ' + G.beers[c]));
     stat.push('');
-    if (G.flags.pokerWinner_home) stat.push('Home poker champion: ' + nm(G.flags.pokerWinner_home));
-    if (G.flags.pokerWinner_restaurant) stat.push('Pub poker champion: ' + nm(G.flags.pokerWinner_restaurant));
-    if (G.flags.saunaWinner) stat.push('Sauna endurance: ' + nm(G.flags.saunaWinner));
-    stat.push('Burnt dinners: ' + (G.flags.burnt || 0));
-    stat.push('Drone status: ' + (G.flags.droneTree ? 'in a tree' : G.flags.droneCrash ? 'on the ground' : 'airworthy'));
+    if (G.flags.pokerWinner_home) stat.push('Kotipokerin mestari: ' + nm(G.flags.pokerWinner_home));
+    if (G.flags.pokerWinner_restaurant) stat.push('Kuppilapokerin mestari: ' + nm(G.flags.pokerWinner_restaurant));
+    if (G.flags.saunaWinner) stat.push('Saunan kestävyys: ' + nm(G.flags.saunaWinner));
+    stat.push('Palaneet ruoat: ' + (G.flags.burnt || 0));
+    stat.push('Dronen tila: ' + (G.flags.droneTree ? 'puussa' : G.flags.droneCrash ? 'maassa' : 'lentokunnossa'));
     const out = [];
     stat.forEach(l => wrap(l, 190, 9).forEach(x => out.push(x)));
-    slides.push({ head: 'THE NUMBERS', lines: out, snap: { draw: drawSelfie, caption: 'the ride home' } });
-    slides.push({ head: 'THE END', lines: ['', 'Thanks for the evening.', 'Same time next month?', '', 'Press A to play again'], snap: { draw: drawSelfie, caption: 'see you next time' }, last: true });
+    slides.push({ head: 'LUVUT', lines: out, snap: { draw: drawSelfie, caption: 'kotimatka' } });
+    slides.push({ head: 'LOPPU', lines: ['', 'Kiitos illasta.', 'Samaan aikaan ensi kuussa?', '', 'Paina A pelataksesi uudestaan'], snap: { draw: drawSelfie, caption: 'nähdään ensi kerralla' }, last: true });
     slides.forEach(s => { s.dur = s.last ? 9999 : Math.max(7, (H + s.lines.length * 13) / 34); });
   }
   return {
@@ -120,7 +120,7 @@ function CreditsScene() {
       T(s.head, tx, y0, { size: 13, align: 'center', c: '#ffd166' });
       s.lines.forEach((l, k) => T(l, tx, y0 + 24 + k * 13, { size: 9, align: 'center', c: '#f2e6c9' }));
       ctx.restore();
-      if (s.last && Math.floor(Scenes.time * 2) % 2 === 0) T('A: play again', W / 2, H - 28, { size: 9, align: 'center', c: '#fff' });
+      if (s.last && Math.floor(Scenes.time * 2) % 2 === 0) T('A: pelaa uudestaan', W / 2, H - 28, { size: 9, align: 'center', c: '#fff' });
       drawToast();
     },
   };

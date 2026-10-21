@@ -6,20 +6,20 @@ const cast3 = (v, xs, flipLast) => ['tuomas', 'antti', 'rauno'].map((c, i) => ({
 const go = (scene) => Scenes.go(scene);
 
 const EP = {
-  1: { title: 'Meeting Up', time: '14:00', music: 'day', suggest: 'antti',
-    text: 'A parking lot. A sunny Saturday. Three men with a plan: they do not have a plan.' },
-  2: { title: 'Toys for Grown-ups', time: '15:30', music: 'day', suggest: 'tuomas',
-    text: 'Tuomas unpacks the RC car and the drone. Rauno prepares to explain the physics. Antti prepares to be unimpressed.' },
+  1: { title: 'Tapaaminen', time: '14:00', music: 'day', suggest: 'antti',
+    text: 'Parkkipaikka. Aurinkoinen lauantai. Kolme miestä ja suunnitelma: suunnitelmaa ei ole.' },
+  2: { title: 'Aikuisten lelut', time: '15:30', music: 'day', suggest: 'tuomas',
+    text: 'Tuomas purkaa radio-ohjattavan auton ja dronen. Rauno valmistautuu selittämään fysiikkaa. Antti valmistautuu olemaan ihastumatta.' },
   3: { title: 'Löyly', time: '17:30', music: 'sauna', suggest: 'rauno',
-    text: 'The great equalizer. Three men, one stove, and a towel policy of limited ambition.' },
-  4: { title: 'The Kitchen', time: '19:30', music: 'kitchen', suggest: 'antti',
-    text: 'Antti steps up to the stove. Fire, steel and sausage. Everyone else steps back.' },
-  5: { title: 'Poker Night', time: '21:30', music: 'poker', suggest: 'tuomas',
-    text: 'Chips, cards and psychological warfare. No money is lost, only pride.' },
-  6: { title: 'To the Restaurant', time: '23:30', music: 'restaurant', suggest: 'rauno',
-    text: 'The evening moves to the pub. The beer flows. Standards drop. Stories grow.' },
-  7: { title: 'The Way Home', time: '02:00', music: 'night', suggest: 'antti',
-    text: 'The streets are quiet. The friends are not.' },
+    text: 'Suuri tasoittaja. Kolme miestä, yksi kiuas ja pyyhepolitiikka vaatimattomin tavoittein.' },
+  4: { title: 'Keittiö', time: '19:30', music: 'kitchen', suggest: 'antti',
+    text: 'Antti astuu liedelle. Tuli, teräs ja makkara. Muut astuvat taaksepäin.' },
+  5: { title: 'Pokeri-ilta', time: '21:30', music: 'poker', suggest: 'tuomas',
+    text: 'Pelimerkkejä, kortteja ja psykologista sodankäyntiä. Rahaa ei menetetä, vain ylpeys.' },
+  6: { title: 'Ravintolaan', time: '23:30', music: 'restaurant', suggest: 'rauno',
+    text: 'Ilta siirtyy kuppilaan. Kalja virtaa. Vaatimukset laskevat. Tarinat kasvavat.' },
+  7: { title: 'Kotimatka', time: '02:00', music: 'night', suggest: 'antti',
+    text: 'Kadut ovat hiljaa. Kaverit eivät.' },
 };
 const EP_START = {};
 function episodeCard(n) {
@@ -32,21 +32,21 @@ EP_START[1] = () => Cutscene({
   bg: t => BG.lot(t, 'day'), floor: BG.FLOOR.lot, music: 'day',
   cast: cast3('out', [130, 240, 350], true),
   steps: [
-    nar('A parking lot somewhere in Finland. Saturday, 14:00. Three men, three hats, zero plans.'),
-    say('tuomas', 'Gentlemen. I have brought the RC car, the drone, and an unreasonable number of batteries.'),
-    say('rauno', 'I have brought my intellect, and a charger for those batteries, which you forgot. You are welcome.'),
-    say('antti', 'I have brought my good frying pan. Please nobody ask why.'),
-    say('tuomas', 'Why?'),
-    say('antti', 'It has been waiting for this evening.'),
+    nar('Parkkipaikka jossain Suomessa. Lauantai, kello 14. Kolme miestä, kolme hattua, nolla suunnitelmaa.'),
+    say('tuomas', 'Hyvät herrat. Toin radio-ohjattavan auton, dronen ja kohtuuttoman määrän akkuja.'),
+    say('rauno', 'Minä toin älyni sekä laturin noille akuille, jonka unohdit. Ole hyvä.'),
+    say('antti', 'Minä toin hyvän paistinpannuni. Älköön kukaan kysykö miksi.'),
+    say('tuomas', 'Miksi?'),
+    say('antti', 'Se on odottanut tätä iltaa.'),
     {
-      choice: ["Let's get beer first.", "Let's drive the RC car first!", 'I love you guys. (A bit early.)'], text: 'The evening begins. What does {P} say?',
+      choice: ['Haetaan ensin kaljaa.', 'Ajetaan ensin radiksella!', 'Rakastan teitä, pojat. (Vähän aikaisin.)'], text: 'Ilta alkaa. Mitä {P} sanoo?',
       on: (i) => {
-        if (i === 0) { addMood(3); return [say('antti', 'A wise man. Beer first, always.')]; }
-        if (i === 1) { addMood(2); return [say('tuomas', 'FINALLY someone with taste!')]; }
-        addMood(2); return [say('rauno', 'That sentiment is statistically premature, but noted with warmth.'), say('antti', '...I love you too. Now, beer.')];
+        if (i === 0) { addMood(3); return [say('antti', 'Viisas mies. Kalja ensin, aina.')]; }
+        if (i === 1) { addMood(2); return [say('tuomas', 'VIHDOIN joku, jolla on makua!')]; }
+        addMood(2); return [say('rauno', 'Tunnustus on tilastollisesti ennenaikainen, mutta se on huomioitu lämmöllä.'), say('antti', '...Minäkin rakastan sinua. Nyt kuitenkin kaljaa.')];
       },
     },
-    nar('First stop: the shop. The evening needs supplies.'),
+    nar('Ensimmäinen pysäkki: kauppa. Ilta tarvitsee tarvikkeita.'),
   ],
   onEnd: () => go(ShopScene({ done: () => go(episodeCard(2)) })),
 });
@@ -56,38 +56,38 @@ EP_START[2] = () => Cutscene({
   bg: t => BG.yard(t, 'day'), floor: BG.FLOOR.yard, music: 'day',
   cast: cast3('out', [110, 230, 350], true),
   steps: [
-    say('tuomas', 'Behold. A 1:10 scale monster of speed. It has a name. The name is Kevin.'),
-    say('rauno', 'Kevin possesses an admirable power-to-weight ratio. The steering geometry, however, is aspirational.'),
-    say('antti', 'Can it carry a sausage?'),
-    say('tuomas', 'Do NOT put a sausage on Kevin.'),
-    nar('Obstacle course time. Drive through the checkpoints in order. Cones are not your friends. Tuomas drives best, but you can switch any time (C).'),
+    say('tuomas', 'Katsokaa. Mittakaavan 1:10 nopeuden hirviö. Sillä on nimi. Nimi on Kevin.'),
+    say('rauno', 'Kevinin teho-painosuhde on ihailtava. Ohjausgeometria on kuitenkin lähinnä toiveikas.'),
+    say('antti', 'Jaksaako se kantaa makkaraa?'),
+    say('tuomas', 'Kevinin päälle EI laiteta makkaraa.'),
+    nar('Esterata. Aja tarkistuspisteiden läpi järjestyksessä. Kartiot eivät ole ystäviäsi. Tuomas ajaa parhaiten, mutta voit vaihtaa hahmoa milloin vain (C).'),
   ],
   onEnd: () => go(RCScene({
     done: (r) => go(Cutscene({
       bg: t => BG.yard(t, 'day'), floor: BG.FLOOR.yard, music: 'day', cast: cast3('out', [110, 230, 350], true),
       steps: [
-        say('rauno', 'Elapsed time: ' + r.time.toFixed(1) + ' seconds. I award a rating of ' + r.rating + '. ' + (r.hits > 3 ? 'The cones have filed a complaint.' : 'The cones are cautiously optimistic.')),
-        say('tuomas', r.rating === 'S' || r.rating === 'A' ? 'Kevin is proud. I am proud. Everyone is proud.' : 'Kevin was not at fault. The course was.'),
-        say('antti', 'Fine. But can we eat soon?'),
-        say('tuomas', 'Not before the drone. The drone is non-negotiable.'),
-        nar('The drone comes out of its case. Fly through all five rings and land on the pad. Trees are... present.'),
+        say('rauno', 'Kulunut aika: ' + r.time.toFixed(1).replace('.', ',') + ' sekuntia. Arvosanaksi annan ' + r.rating + '. ' + (r.hits > 3 ? 'Kartiot ovat tehneet valituksen.' : 'Kartiot ovat varovaisen toiveikkaita.')),
+        say('tuomas', r.rating === 'S' || r.rating === 'A' ? 'Kevin on ylpeä. Minä olen ylpeä. Kaikki ovat ylpeitä.' : 'Kevin ei ollut syyllinen. Rata oli.'),
+        say('antti', 'Selvä. Mutta voidaanko syödä pian?'),
+        say('tuomas', 'Ei ennen dronea. Drone ei ole neuvoteltavissa.'),
+        nar('Drone tulee esiin kotelostaan. Lennä kaikkien viiden renkaan läpi ja laskeudu alustalle. Puita on... paikalla.'),
       ],
       onEnd: () => go(DroneScene({
         done: (d) => go(Cutscene({
           bg: t => BG.yard(t, 'day'), floor: BG.FLOOR.yard, music: 'day', cast: cast3('out', [110, 230, 350], true),
           steps: d.landed ? [
-            say('rauno', 'A perfect landing. I want it on record that this was not luck. It was a little bit of luck.'),
-            say('tuomas', 'I told you. Precision.'),
-            say('antti', 'Suspicious.'),
+            say('rauno', 'Täydellinen laskeutuminen. Haluan pöytäkirjaan, ettei se ollut tuuria. Se oli vähän tuuria.'),
+            say('tuomas', 'Sanoinhan. Tarkkuutta.'),
+            say('antti', 'Epäilyttävää.'),
           ] : d.tree ? [
-            say('rauno', 'We have just witnessed a classic case in which angular velocity exceeded the pilot\'s reaction time.'),
-            say('tuomas', 'The tree jumped out at me.'),
-            say('antti', 'Trees do not jump.'),
-            say('tuomas', 'This one did.'),
-            nar('The drone remains in the tree. It will be retrieved at a later date. Possibly with a ladder. Possibly with prayer.'),
+            say('rauno', 'Todistimme juuri klassisen tapauksen, jossa kulmanopeus ylitti lentäjän reaktioajan.'),
+            say('tuomas', 'Puu hyppäsi eteeni.'),
+            say('antti', 'Puut eivät hyppää.'),
+            say('tuomas', 'Tämä hyppäsi.'),
+            nar('Drone jää puuhun. Se haetaan pois myöhemmin. Ehkä tikkailla. Ehkä rukoilemalla.'),
           ] : [
-            say('rauno', 'The drone has returned to the ground by means other than landing. This is called a crash.'),
-            say('tuomas', 'It was a very dramatic landing.'),
+            say('rauno', 'Drone on palannut maahan muulla kuin laskeutumisen keinoin. Tätä kutsutaan putoamiseksi.'),
+            say('tuomas', 'Se oli hyvin dramaattinen laskeutuminen.'),
             say('antti', 'Sauna?'),
             say('tuomas', 'Sauna.'),
           ],
@@ -104,22 +104,22 @@ function saunaBg(t) { BG.sauna(t); }
 function saunaFg() { rect(40, 188, 280, 10, '#8a5a30'); rect(40, 188, 280, 2, '#a8723d'); rect(40, 198, 280, 24, '#63401f'); }
 let compIdx = 0;
 function complimentRound() {
-  const traits = { tuomas: 'Your toys make grown men weep with joy.', antti: 'You can make a sausage taste like a love letter.', rauno: 'You speak like a Nobel laureate who also fixes my Wi-Fi.' };
+  const traits = { tuomas: 'Leluistasi aikuiset miehet itkevät ilosta.', antti: 'Sinä osaat saada makkaran maistumaan rakkauskirjeeltä.', rauno: 'Puhut kuin Nobel-voittaja, joka korjaa myös wifini.' };
   return [
     { fn: () => { const o = others(); G.flags.target = o[compIdx++ % 2]; } },
-    nar('{P}, tell {T} something nice. Sauna rules: total honesty, mild exaggeration.'),
+    nar('{P}, sano {T:all} jotain kivaa. Saunan säännöt: täysi rehellisyys, lievä liioittelu.'),
     {
-      choice: () => NAMES.map(c => traits[c]), text: 'What does {P} say to {T}?',
+      choice: () => NAMES.map(c => traits[c]), text: 'Mitä {P} sanoo {T:all}?',
       on: (i) => {
         const trait = NAMES[i], target = G.flags.target;
         if (trait === target) {
           addMood(6); Snd.sfx('love'); G.flags.complimentsOK = (G.flags.complimentsOK || 0) + 1;
-          if (!G.flags.complimentLogged) { G.flags.complimentLogged = true; logEvent('compliment', nm(G.player) + ' told ' + nm(target) + ' exactly the right nice thing. Manly tears were blamed on the steam.', true); }
-          return [say(target, target === 'tuomas' ? '...I might cry. It is the steam.' : target === 'antti' ? 'Brother.' : 'That is objectively the nicest thing anyone has said to me. Please repeat it for the record.')];
+          if (!G.flags.complimentLogged) { G.flags.complimentLogged = true; logEvent('compliment', nm(G.player) + ' sanoi ' + nf(target, 'all') + ' juuri sen oikean kauniin asian. Miehekkäät kyyneleet kaadettiin löylyn piikkiin.', true); }
+          return [say(target, target === 'tuomas' ? '...Taidan itkeä. Se on se löyly.' : target === 'antti' ? 'Veli.' : 'Se on objektiivisesti kaunein asia, jonka kukaan on minulle sanonut. Toista se pöytäkirjaan.')];
         }
         addMood(1);
-        if (trait === G.player) return [say(trait === 'rauno' ? 'tuomas' : 'rauno', nm(G.player) + ' just complimented ' + nm(G.player) + '. Bold. Confidence noted.')];
-        return [say(target, '...That was about ' + nm(trait) + '. But thanks?')];
+        if (trait === G.player) return [say(trait === 'rauno' ? 'tuomas' : 'rauno', nm(G.player) + ' kehui juuri itseään. Rohkeaa. Itseluottamus huomattu.')];
+        return [say(target, '...Tuo oli ' + nf(trait, 'gen') + ' juttu. Mutta kiitos?')];
       },
     },
   ];
@@ -127,19 +127,19 @@ function complimentRound() {
 EP_START[3] = () => Cutscene({
   bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
   steps: [
-    nar('The sauna: 80 degrees. The mood: 100 percent. Towels: present, arguably.'),
-    say('antti', '{P}, you throw the löyly. It is a sacred responsibility.'),
-    say('rauno', 'Physics dictates that water on hot stones becomes steam rapidly. I shall not elaborate. I shall elaborate.'),
-    say('tuomas', 'Please do not elaborate.'),
+    nar('Sauna: 80 astetta. Tunnelma: 100 prosenttia. Pyyhkeet: paikalla, kai.'),
+    say('antti', '{P}, sinä heität löylyt. Se on pyhä vastuu.'),
+    say('rauno', 'Fysiikan mukaan vesi kuumilla kivillä muuttuu nopeasti höyryksi. En tarkenna. Tarkennan.'),
+    say('tuomas', 'Älä tarkenna.'),
   ],
   onEnd: () => go(steamGame()),
 });
 function steamGame() {
   const puffs = [];
   return TimingScene({
-    title: 'THROW THE LÖYLY', hint: 'Press A when the marker is in the green zone', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
+    title: 'HEITÄ LÖYLYÄ', hint: 'Paina A, kun merkki on vihreällä alueella', rounds: 5, zoneW: 0.2, speed: 1.2, music: 'sauna',
     bg: saunaBg, floor: 190, bust: true, cast: saunaCast(),
-    texts: { hit: 'Perfect löyly! Aaah...', low: 'Weak splash. The stones are unimpressed.', high: 'TOO MUCH! A wall of steam. Everyone wheezes.' },
+    texts: { hit: 'Täydellinen löyly! Aaah...', low: 'Heikko molaus. Kivet eivät vaikutu.', high: 'LIIKAA! Höyryseinä. Kaikki hengästyvät.' },
     expr: (c, st) => (st.hits >= 2 ? 'hot' : undefined),
     fg: saunaFg,
     onGrade: (g, i, st) => {
@@ -153,22 +153,22 @@ function steamGame() {
     },
     done: (grades) => {
       const hits = grades.filter(g => g === 'hit').length;
-      logEvent('steam', 'The löyly was thrown ' + grades.length + ' times. ' + hits + ' of them were perfect. The rest were interpreted as character.', hits >= 3);
+      logEvent('steam', 'Löylyä heitettiin ' + grades.length + ' kertaa. ' + hits + ' niistä oli täydellistä. Loput tulkittiin luonteenpiirteiksi.', hits >= 3);
       go(Cutscene({
         bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
         steps: [
-          say('rauno', hits >= 4 ? 'A flawless thermal performance.' : hits >= 2 ? 'Acceptable. The stones have no complaints.' : 'I have seen better steam in a kettle.'),
-          nar('Now: the ancient sauna ritual. Who can endure the heat the longest? Mash A to stay on the bench!'),
+          say('rauno', hits >= 4 ? 'Moitteeton lämpösuoritus.' : hits >= 2 ? 'Hyväksyttävä. Kivillä ei ole huomauttamista.' : 'Olen nähnyt parempaa höyryä vedenkeittimessä.'),
+          nar('Nyt: muinainen saunarituaali. Kuka kestää kuumuutta pisimpään? Hakkaa A:ta pysyäksesi lauteilla!'),
         ],
         onEnd: () => go(EnduranceScene({
           done: () => go(Cutscene({
             bg: saunaBg, fg: saunaFg, floor: 190, bust: true, music: 'sauna', cast: saunaCast(),
             steps: [
-              say(G.flags.saunaWinner || 'antti', 'I won. I will not be humble about it.'),
-              nar('In the sauna, honesty comes easy. And so do compliments.'),
+              say(G.flags.saunaWinner || 'antti', 'Voitin. En aio olla nöyrä siitä.'),
+              nar('Saunassa rehellisyys tulee helposti. Samoin kehut.'),
               { fn: () => complimentRound() },
               { fn: () => complimentRound() },
-              nar('Out of the sauna. The evening air. Three men in towels, suddenly emotional.'),
+              nar('Ulos saunasta. Iltailma. Kolme miestä pyyhkeissä, yhtäkkiä herkistyneinä.'),
             ],
             onEnd: () => go(HugScene({ done: () => go(porchScene()) })),
           })),
@@ -182,11 +182,11 @@ function porchScene() {
     bg: t => BG.porch(t, 'eve'), floor: BG.FLOOR.porch, music: 'sauna',
     cast: [{ c: 'tuomas', x: 130, v: 'sauna' }, { c: 'antti', x: 240, v: 'sauna' }, { c: 'rauno', x: 350, v: 'sauna', flip: true }],
     steps: [
-      { fn: () => { drinkAll(1); Snd.sfx('clink'); logEvent('porch', 'Three men, three beers, one lake. Nobody spoke. Everything was said.', true); } },
-      nar('Cold beer on the porch. The lake is calm. Time stands still for eleven seconds.'),
-      say('antti', 'Best sauna ever.'),
-      say('rauno', 'Subjective, but I concur.'),
-      say('tuomas', 'Cheers, boys.'),
+      { fn: () => { drinkAll(1); Snd.sfx('clink'); logEvent('porch', 'Kolme miestä, kolme kaljaa, yksi järvi. Kukaan ei puhunut. Kaikki tuli sanottua.', true); } },
+      nar('Kylmä kalja kuistilla. Järvi on tyyni. Aika pysähtyy yhdentoista sekunnin ajaksi.'),
+      say('antti', 'Paras sauna ikinä.'),
+      say('rauno', 'Subjektiivista, mutta olen samaa mieltä.'),
+      say('tuomas', 'Kippis, pojat.'),
     ],
     onEnd: () => go(episodeCard(4)),
   });
@@ -197,28 +197,28 @@ function kitchenCast() { return [{ c: 'tuomas', x: 150, v: 'in' }, { c: 'antti',
 EP_START[4] = () => Cutscene({
   bg: t => BG.kitchen(t), floor: BG.FLOOR.kitchen, music: 'kitchen', cast: kitchenCast(),
   steps: [
-    say('antti', 'Stand back. I am cooking.'),
-    say('rauno', 'I have set a timer. It will not help, but it is there for moral support.'),
-    say('tuomas', 'Can I help?'),
-    say('antti', 'You can hold the beer.'),
-    ...(G.flags.noSausage ? [say('rauno', 'We did not buy sausages.'), say('antti', '...Emergency noodles it is.')] : []),
-    nar(G.shop.onion ? 'First the onions: mash A to chop. Then fry: take each piece off when the bar is green. Antti cooks best.' : 'Fry: take each piece off when the bar is in the green zone. Antti cooks best.'),
+    say('antti', 'Takaisin. Minä keitän.'),
+    say('rauno', 'Olen asettanut ajastimen. Se ei auta, mutta se on tukena moraalisesti.'),
+    say('tuomas', 'Voinko auttaa?'),
+    say('antti', 'Voit pitää kaljaa.'),
+    ...(G.flags.noSausage ? [say('rauno', 'Emme ostaneet makkaraa.'), say('antti', '...Hätänuudelit sitten.')] : []),
+    nar(G.shop.onion ? 'Ensin sipulit: hakkaa A:ta pilkkoaksesi. Sitten paisto: ota kukin pala pois, kun palkki on vihreä. Antti kokkaa parhaiten.' : 'Paisto: ota kukin pala pois, kun palkki on vihreällä alueella. Antti kokkaa parhaiten.'),
   ],
   onEnd: () => go(CookScene({
     done: (r) => go(Cutscene({
       bg: t => BG.kitchen(t), floor: BG.FLOOR.kitchen, music: 'kitchen', cast: kitchenCast(),
       steps: [
-        ...(r.pct > 0.8 ? [say('rauno', 'I have rarely seen a sausage this golden. This is, scientifically, art.'), say('tuomas', 'I would like to marry this dinner.')]
-          : r.burnt >= 2 ? [say('tuomas', 'This is... crunchy.'), say('rauno', 'The carbon content is impressive.'), say('antti', 'It is rustic.')]
-          : [say('antti', 'Edible. Possibly good. Eat.'), say('rauno', 'Acceptable nutrition.')]),
+        ...(r.pct > 0.8 ? [say('rauno', 'Harvoin olen nähnyt näin kullanruskeaa makkaraa. Tämä on tieteellisesti taidetta.'), say('tuomas', 'Haluaisin naimisiin tämän illallisen kanssa.')]
+          : r.burnt >= 2 ? [say('tuomas', 'Tämä on... rapeaa.'), say('rauno', 'Hiilipitoisuus on vaikuttava.'), say('antti', 'Se on rustiikkista.')]
+          : [say('antti', 'Syötävää. Mahdollisesti hyvää. Syökää.'), say('rauno', 'Hyväksyttävää ravintoa.')]),
         { fn: () => {
           if (!G.flags.herring) return [];
           const good = Math.random() < 0.5;
           addMood(good ? 4 : -4);
-          return [say('antti', 'I also added the herring.'), say('rauno', good ? '...It works. I do not understand why, but it works.' : 'I have questions. They will remain unanswered.')];
+          return [say('antti', 'Lisäsin myös silakan.'), say('rauno', good ? '...Se toimii. En ymmärrä miksi, mutta se toimii.' : 'Minulla on kysymyksiä. Ne jäävät vastaamatta.')];
         } },
         { fn: () => { drinkAll(1); Snd.sfx('clink'); } },
-        nar('Dinner is eaten in near silence, the highest compliment. Another beer is opened.'),
+        nar('Illallinen syödään lähes hiljaisuudessa, mikä on korkein kehu. Avataan vielä yksi kalja.'),
       ],
       onEnd: () => go(episodeCard(5)),
     })),
@@ -230,18 +230,18 @@ function livingCast() { return [{ c: 'tuomas', x: 140, v: 'in' }, { c: 'antti', 
 EP_START[5] = () => Cutscene({
   bg: t => BG.living(t), floor: BG.FLOOR.living, music: 'poker', cast: livingCast(),
   steps: [
-    say('tuomas', 'Texas hold\'em, light edition. The winner gets eternal bragging rights.'),
-    say('antti', 'I am going to take all of your chips.'),
-    say('rauno', 'I shall call everything. This is my strategy.'),
-    nar('Read your friends: Tuomas bluffs a lot. Antti only bets with strong hands. Rauno calls everything and rarely raises. Six hands. Switch character between hands with C.'),
+    say('tuomas', 'Texas hold\'em, kevytversio. Voittaja saa ikuiset leuhkimisoikeudet.'),
+    say('antti', 'Aion viedä kaikki teidän pelimerkkinne.'),
+    say('rauno', 'Maksan kaiken. Se on strategiani.'),
+    nar('Lue kavereitasi: Tuomas bluffaa paljon. Antti panostaa vain vahvoilla käsillä. Rauno maksaa kaiken ja korottaa harvoin. Kuusi kättä. Vaihda hahmoa käsien välillä C:llä.'),
   ],
   onEnd: () => go(PokerScene({ hands: 6, venue: 'home', music: 'poker', done: (w) => go(Cutscene({
     bg: t => BG.living(t), floor: BG.FLOOR.living, music: 'poker', cast: livingCast(),
     steps: [
-      say(w, w === 'antti' ? 'I told you. All your chips are mine.' : w === 'tuomas' ? 'Skill. Pure skill. Also a little bluffing.' : 'I... won? By calling everything? Unbelievable.'),
-      say(others(w)[0], 'This game is rigged.'),
-      say(others(w)[1], 'It is cards. It is always rigged.'),
-      nar('Time to leave the house. The restaurant is calling.'),
+      say(w, w === 'antti' ? 'Sanoin. Kaikki pelimerkkinne ovat minun.' : w === 'tuomas' ? 'Taitoa. Puhdasta taitoa. Ja vähän bluffausta.' : 'Minä... voitin? Maksamalla kaiken? Uskomatonta.'),
+      say(others(w)[0], 'Tämä peli on viritetty.'),
+      say(others(w)[1], 'Kyse on korteista. Ne ovat aina viritettyjä.'),
+      nar('Aika lähteä talosta. Ravintola kutsuu.'),
     ],
     onEnd: () => go(episodeCard(6)),
   })) })),
@@ -251,31 +251,31 @@ EP_START[5] = () => Cutscene({
 EP_START[6] = () => {
   const events = [
     () => [
-      nar('A seagull swoops down and steals the last sausage from Antti\'s hand!'),
-      say('antti', 'NOT THE SAUSAGE!'),
-      { choice: ['Chase the seagull!', 'Let it go.', 'Calculate the trajectory (Rauno style).'], text: 'What does {P} do?',
+      nar('Lokki syöksyy alas ja varastaa viimeisen makkaran Antin kädestä!'),
+      say('antti', 'EI MAKKARAA!'),
+      { choice: ['Jahtaa lokkia!', 'Anna olla.', 'Laske lentorata (Raunon tyyliin).'], text: 'Mitä {P} tekee?',
         on: (i) => {
-          if (i === 0) { addMood(3); logEvent('seagull', 'A seagull stole a sausage. A grown man ran after it in the dark. The seagull won.', true); return [nar('{P} sprints after the seagull. The seagull is faster. The seagull is always faster. The effort is appreciated.')]; }
-          if (i === 1) { addMood(1); return [say('antti', '...It was a good sausage.')]; }
-          addMood(2); return [say('rauno', 'Trajectory suggests it landed on that roof. Probability of recovery: zero.'), say('tuomas', 'Thank you, Professor.')];
+          if (i === 0) { addMood(3); logEvent('seagull', 'Lokki varasti makkaran. Aikuinen mies juoksi sen perässä pimeässä. Lokki voitti.', true); return [nar('{P} syöksyy lokin perään. Lokki on nopeampi. Lokki on aina nopeampi. Yritys arvostetaan.')]; }
+          if (i === 1) { addMood(1); return [say('antti', '...Se oli hyvä makkara.')]; }
+          addMood(2); return [say('rauno', 'Lentoradan mukaan se laskeutui tuolle katolle. Palautuksen todennäköisyys: nolla.'), say('tuomas', 'Kiitos, professori.')];
         } },
     ],
     () => [
-      nar('A stray cat blocks the sidewalk and silently judges everyone.'),
-      { choice: ['Pet the cat.', 'Bow respectfully.', 'Ignore the cat. Walk past with dignity.'], text: 'What does {P} do?',
+      nar('Kulkukissa tukkii jalkakäytävän ja tuomitsee kaikki hiljaa.'),
+      { choice: ['Silitä kissaa.', 'Kumarra kunnioittavasti.', 'Älä välitä kissasta. Kävele ohi arvokkaasti.'], text: 'Mitä {P} tekee?',
         on: (i) => {
-          if (i === 0) { addMood(4); logEvent('cat', 'A stray cat was petted on the way to the pub. It accepted the tribute.', true); return [nar('The cat purrs. Three grown men melt.')]; }
-          if (i === 1) { addMood(3); return [say('rauno', 'One should always respect an apex predator.')]; }
-          addMood(0); return [nar('The cat watches. The cat remembers.')];
+          if (i === 0) { addMood(4); logEvent('cat', 'Kulkukissaa silitettiin matkalla kuppilaan. Se otti kunnianosoituksen vastaan.', true); return [nar('Kissa kehrää. Kolme aikuista miestä sulaa.')]; }
+          if (i === 1) { addMood(3); return [say('rauno', 'Huippupetoa tulee aina kunnioittaa.')]; }
+          addMood(0); return [nar('Kissa katsoo. Kissa muistaa.')];
         } },
     ],
     () => [
-      nar('A kebab stand glows like an oasis in the night.'),
-      { choice: ['Buy kebab for everybody.', 'Resist. We have a pub to reach.', 'Tuomas orders for everybody (he always does).'], text: 'What does {P} do?',
+      nar('Kebabkioski hohtaa kuin keidas yössä.'),
+      { choice: ['Osta kebabit kaikille.', 'Vastusta. Meillä on kuppila saavutettavana.', 'Tuomas tilaa kaikille (kuten aina).'], text: 'Mitä {P} tekee?',
         on: (i) => {
-          if (i === 0) { addMood(4); addHunger(-12); logEvent('kebab', 'Kebab was acquired on the way to the pub. It was not the last kebab.', true); return [say('antti', 'Brother. You complete me.')]; }
-          if (i === 1) { addMood(1); return [say('rauno', 'A disciplined choice. I admire it and resent it.')]; }
-          addMood(3); addHunger(-8); return [say('tuomas', 'Three kebabs. Extra sauce. Do not argue.')];
+          if (i === 0) { addMood(4); addHunger(-12); logEvent('kebab', 'Kebabia hankittiin matkalla kuppilaan. Se ei ollut viimeinen kebab.', true); return [say('antti', 'Veli. Sinä täydennät minut.')]; }
+          if (i === 1) { addMood(1); return [say('rauno', 'Kurinalainen valinta. Ihailen sitä ja kaunaan sitä.')]; }
+          addMood(3); addHunger(-8); return [say('tuomas', 'Kolme kebabia. Extrakastiketta. Älkää väitelkö.')];
         } },
     ],
   ];
@@ -284,17 +284,17 @@ EP_START[6] = () => {
     bg: t => BG.street(t, 'night'), floor: BG.FLOOR.street, music: 'restaurant',
     cast: [{ c: 'tuomas', x: 150, v: 'out', walk: true }, { c: 'antti', x: 240, v: 'out', walk: true }, { c: 'rauno', x: 330, v: 'out', walk: true, flip: false }],
     steps: [
-      nar('Midnight approaches. The pub glows in the distance like a greasy lighthouse.'),
-      say('rauno', 'According to my calculations, we arrive in four minutes, assuming no incidents.'),
+      nar('Keskiyö lähestyy. Kuppila hohtaa kaukana kuin rasvainen majakka.'),
+      say('rauno', 'Laskelmieni mukaan saavumme neljässä minuutissa, mikäli välikohtauksia ei ilmene.'),
       ...ev,
-      nar('The pub. The neon sign flickers. A waitress nods at them like old friends.'),
+      nar('Kuppila. Neonkyltti vilkkuu. Tarjoilija nyökkää heille kuin vanhoille tutuille.'),
     ],
     onEnd: () => go(Cutscene({
       bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant, music: 'restaurant', cast: [{ c: 'tuomas', x: 150, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 330, v: 'out' }],
       steps: [
-        say('antti', 'Three beers, please. The big ones.'),
-        say('tuomas', 'To the best day of the year!'),
-        nar('Time to clink glasses. Press A when the marker is in the green zone. Three rounds.'),
+        say('antti', 'Kolme kaljaa, kiitos. Isoja.'),
+        say('tuomas', 'Vuoden parhaalle päivälle!'),
+        nar('Aika kilistää. Paina A, kun merkki on vihreällä alueella. Kolme kierrosta.'),
       ],
       onEnd: () => go(cheersGame()),
     })),
@@ -303,10 +303,10 @@ EP_START[6] = () => {
 function cheersGame() {
   const sparks = [];
   return TimingScene({
-    title: 'CHEERS!', hint: 'Press A when the glasses meet in the green zone', rounds: 3, zoneW: 0.22, speed: 1.35, music: 'restaurant',
+    title: 'KIPPIS!', hint: 'Paina A, kun lasit kohtaavat vihreällä alueella', rounds: 3, zoneW: 0.22, speed: 1.35, music: 'restaurant',
     bg: t => BG.restaurant(t), floor: 196,
     cast: [{ c: 'tuomas', x: 120, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 360, v: 'out' }],
-    texts: { hit: 'CLINK! Perfect cheers.', low: 'Too early. Beer on the table.', high: 'Too late. Glass meets elbow.' },
+    texts: { hit: 'KILING! Täydellinen kippis.', low: 'Liian aikaisin. Kaljaa pöydälle.', high: 'Liian myöhään. Lasi kohtaa kyynärpään.' },
     onGrade: (g) => {
       drinkAll(1);
       if (g === 'hit') { Snd.sfx('clink'); addMood(3); for (let i = 0; i < 12; i++) sparks.push({ x: 240 + rnd(-10, 10), y: 100, vx: rnd(-60, 60), vy: rnd(-70, -10), life: 0.8 }); }
@@ -321,21 +321,21 @@ function cheersGame() {
     },
     done: (grades) => {
       const hits = grades.filter(g => g === 'hit').length;
-      logEvent('cheers', 'Three rounds of cheers were attempted. ' + hits + ' of them resulted in clinking. The rest resulted in napkins.', hits >= 2);
+      logEvent('cheers', 'Kippistä yritettiin kolme kertaa. ' + hits + ' niistä päättyi kilinään. Loput päättyivät lautasliinoihin.', hits >= 2);
       go(Cutscene({
         bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant, music: 'restaurant', cast: [{ c: 'tuomas', x: 150, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 330, v: 'out' }],
         steps: [
-          say('tuomas', 'Cards?'),
-          say('antti', 'Cards.'),
-          say('rauno', 'I shall call anything.'),
-          nar('A second poker round at the pub. Four hands. The beer is starting to show.'),
+          say('tuomas', 'Kortteja?'),
+          say('antti', 'Kortteja.'),
+          say('rauno', 'Maksan mitä tahansa.'),
+          nar('Toinen pokerikierros kuppilassa. Neljä kättä. Kalja alkaa näkyä.'),
         ],
         onEnd: () => go(PokerScene({ hands: 4, venue: 'restaurant', music: 'restaurant', done: (w) => go(Cutscene({
           bg: t => BG.restaurant(t), floor: BG.FLOOR.restaurant, music: 'restaurant', cast: [{ c: 'tuomas', x: 150, v: 'out' }, { c: 'antti', x: 240, v: 'out' }, { c: 'rauno', x: 330, v: 'out' }],
           steps: [
-            say(w, 'The pub champion has spoken. Another round on the loser.'),
-            say(others(w)[0], 'I demand a rematch. At some point.'),
-            nar('Last orders. The night is long, the walk home longer.'),
+            say(w, 'Kuppilan mestari on puhunut. Seuraava kierros häviäjän piikkiin.'),
+            say(others(w)[0], 'Vaadin uusintaottelua. Joskus.'),
+            nar('Viimeiset tilaukset. Yö on pitkä, kotimatka pidempi.'),
           ],
           onEnd: () => go(episodeCard(7)),
         })) })),
@@ -349,28 +349,28 @@ EP_START[7] = () => Cutscene({
   bg: t => BG.street(t, 'night'), floor: BG.FLOOR.street, music: 'night',
   cast: [{ c: 'tuomas', x: 150, v: 'out', walk: true }, { c: 'antti', x: 240, v: 'out', walk: true }, { c: 'rauno', x: 330, v: 'out', walk: true }],
   steps: [
-    nar('Two in the morning. The streets are empty. The friends are not.'),
-    say('antti', 'I love this city.'),
-    say('rauno', 'You are standing in a puddle.'),
-    say('antti', 'I love this puddle.'),
+    nar('Yö kaksi. Kadut ovat tyhjiä. Kaverit eivät.'),
+    say('antti', 'Rakastan tätä kaupunkia.'),
+    say('rauno', 'Seisot lätäkössä.'),
+    say('antti', 'Rakastan tätä lätäkköä.'),
     { fn: () => {
       const wob = NAMES.some(c => G.bac[c] > 0.55);
-      if (wob) { logEvent('lamp', 'Tuomas attempted to hug a lamp post. The lamp post was a good listener.', true); return [say('tuomas', 'This lamp post understands me.'), say('rauno', 'Tuomas. That is a lamp post.'), say('tuomas', 'Yes. A great one.')]; }
-      return [say('tuomas', 'Best day. No notes.')];
+      if (wob) { logEvent('lamp', 'Tuomas yritti halata lyhtypylvästä. Lyhtypylväs oli hyvä kuuntelija.', true); return [say('tuomas', 'Tämä lyhtypylväs ymmärtää minua.'), say('rauno', 'Tuomas. Tuo on lyhtypylväs.'), say('tuomas', 'Niin on. Loistava sellainen.')]; }
+      return [say('tuomas', 'Paras päivä. Ei huomautettavaa.')];
     } },
-    say('rauno', 'I have ordered a taxi. It will arrive in five minutes, which in Finnish means twenty.'),
+    say('rauno', 'Tilasin taksin. Se saapuu viidessä minuutissa, mikä suomeksi tarkoittaa kahtakymmentä.'),
   ],
   onEnd: () => go(Cutscene({
     bg: t => BG.car(t), floor: 196, music: 'night', bust: true, noMarker: true,
     cast: [{ c: 'antti', x: 240, v: 'out', y: 150 }, { c: 'rauno', x: 140, v: 'out', y: 196 }, { c: 'tuomas', x: 340, v: 'out', y: 196 }],
     steps: [
-      nar('The taxi arrives. Antti takes the back seat, as nature intended.'),
-      say('tuomas', 'That was the best day ever.'),
-      say('rauno', 'A sentiment I can support empirically.'),
-      say('antti', 'Same time next month?'),
-      say('tuomas', 'Obviously.'),
-      { fn: () => { logEvent('ride', 'Three friends in a taxi at 3 a.m., already planning the next one.', true); } },
-      nar('Three friends. One evening. Zero regrets (ask again tomorrow).'),
+      nar('Taksi saapuu. Antti ottaa takapenkin, kuten luonto on tarkoittanut.'),
+      say('tuomas', 'Tämä oli paras päivä ikinä.'),
+      say('rauno', 'Tunnelma, jota voin tukea empiirisesti.'),
+      say('antti', 'Samaan aikaan ensi kuussa?'),
+      say('tuomas', 'Ilman muuta.'),
+      { fn: () => { logEvent('ride', 'Kolme kaveria taksissa kolmelta yöllä, jo suunnittelemassa seuraavaa.', true); } },
+      nar('Kolme kaveria. Yksi ilta. Nolla katumusta (kysy uudestaan huomenna).'),
     ],
     onEnd: () => go(morningCard()),
   })),
@@ -378,8 +378,8 @@ EP_START[7] = () => Cutscene({
 
 function morningCard() {
   const avg = NAMES.reduce((a, c) => a + G.bac[c], 0) / 3;
-  const txt = avg < 0.3 ? 'Surprisingly fresh. Someone forgot to drink. (Or drank wisely.)' : avg < 0.6 ? 'A mild headache and a very clear sense of satisfaction.' : 'A legendary hangover. Worth every minute.';
-  return Card({ ep: 8, title: 'Next Morning', time: '10:30', text: txt, music: 'night', next: () => CreditsScene(), note: 'Roll credits...' });
+  const txt = avg < 0.3 ? 'Yllättävän virkeä olo. Joku unohti juoda. (Tai joi viisaasti.)' : avg < 0.6 ? 'Lievä päänsärky ja erittäin selkeä tyytyväisyyden tunne.' : 'Legendaarinen krapula. Jokaisen minuutin arvoinen.';
+  return Card({ ep: 8, title: 'Seuraava aamu', time: '10:30', text: txt, music: 'night', next: () => CreditsScene(), note: 'Lopputekstit...' });
 }
 
 window.__scenes = { title: TitleScene, card: episodeCard, ep: n => EP_START[n](), shop: () => ShopScene({ done: () => go(episodeCard(2)) }), credits: () => CreditsScene(), morning: morningCard };
